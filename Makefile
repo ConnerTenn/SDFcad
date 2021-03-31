@@ -9,7 +9,7 @@ LDFLAGS += $(shell pkg-config --static --libs glfw3)
 LDFLAGS += $(shell pkg-config --static --libs glew)
 
 TARGET = SDFcad
-cpp_files = SDFcad.cpp
+cpp_files = SDFcad.cpp shader.cpp
 objects = $(cpp_files:.cpp=.o)
 
 all: clean $(TARGET)
