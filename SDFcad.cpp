@@ -70,6 +70,10 @@ int main()
 	// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders( "TransformVertexShader.vertexshader", "ColorFragmentShader.fragmentshader" );
 
+
+	// Get a handle for our "ROT" uniform 
+	GLuint RotID = glGetUniformLocation(programID, "ROT"); 
+
 	// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
 	// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
 	static const GLfloat g_vertex_buffer_data[] = { 
@@ -95,6 +99,13 @@ int main()
 		// Use our shader
 		glUseProgram(programID);
 
+		// Send our transformation to the currently bound shader,  
+		// in the "MVP" uniform 
+		static int i = 0;
+		GLfloat pitch=-3.14f/4.0f/2.0f, yaw=i/100.0f;
+		i++;
+		glUniform2f(RotID, pitch, yaw); 
+
 		// 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
@@ -108,7 +119,7 @@ int main()
 		);
 
 		// Draw the triangle !
-		glDrawArrays(GL_TRIANGLES, 0, 12*3); // 12*3 indices starting at 0 -> 12 triangles
+		glDrawArrays(GL_TRIANGLES, 0, 2*3); // 12*3 indices starting at 0 -> 12 triangles
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);

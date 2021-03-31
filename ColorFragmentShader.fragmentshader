@@ -5,8 +5,10 @@ in vec3 fragmentColor;
 in vec4 gl_FragCoord;
 
 // Ouput data
-out vec3 color;
+out vec3 fragColor;
 
+// Values that stay constant for the whole mesh. 
+uniform vec2 ROT; 
 
 
 // ray marching
@@ -91,6 +93,60 @@ vec3 gradient( vec3 pos ) {
 	);
 }
 
+vec3 fresnel( vec3 F0, vec3 h, vec3 l ) {
+	return F0 + ( 1.0 - F0 ) * pow( clamp( 1.0 - dot( h, l ), 0.0, 1.0 ), 5.0 );
+}
+
+// phong shading
+vec3 shading( vec3 v, vec3 n, vec3 dir, vec3 eye ) {
+	// ...add lights here...
+	
+	float shininess = 16.0;
+	
+	vec3 final = vec3( 0.0 );
+	
+	vec3 ref = reflect( dir, n );
+    
+    vec3 Ks = vec3( 0.5 );
+    vec3 Kd = vec3( 1.0 );
+	
+	// light 0
+	{
+		vec3 light_pos   = vec3( 20.0, 20.0, 20.0 );
+		vec3 light_color = vec3( 1.0, 0.7, 0.7 );
+	
+		vec3 vl = normalize( light_pos - v );
+	
+		vec3 diffuse  = Kd * vec3( max( 0.0, dot( vl, n ) ) );
+		vec3 specular = vec3( max( 0.0, dot( vl, ref ) ) );
+		
+        vec3 F = fresnel( Ks, normalize( vl - dir ), vl );
+		specular = pow( specular, vec3( shininess ) );
+		
+		final += light_color * mix( diffuse, specular, F ); 
+	}
+	
+	// light 1
+	{
+		vec3 light_pos   = vec3( -20.0, -20.0, -30.0 );
+		vec3 light_color = vec3( 0.5, 0.7, 1.0 );
+	
+		vec3 vl = normalize( light_pos - v );
+	
+		vec3 diffuse  = Kd * vec3( max( 0.0, dot( vl, n ) ) );
+		vec3 specular = vec3( max( 0.0, dot( vl, ref ) ) );
+        
+        vec3 F = fresnel( Ks, normalize( vl - dir ), vl );
+		specular = pow( specular, vec3( shininess ) );
+		
+		final += light_color * mix( diffuse, specular, F );
+	}
+
+    //final += texture( iChannel0, ref ).rgb * fresnel( Ks, n, -dir );
+    
+	return final;
+}
+
 // get ray direction
 vec3 ray_dir( float fov, vec2 size, vec2 pos ) {
 	vec2 xy = pos - size * 0.5;
@@ -161,7 +217,7 @@ void main()
 	vec3 eye = vec3( 0.0, 0.0, 3.5 );
 
 	// rotate camera
-	mat3 rot = rotationXY( ( vec2(0,0) - iResolution.xy * 0.5 ).yx * vec2( 0.01, -0.01 ) );
+	mat3 rot = rotationXY(ROT.xy);
 	dir = rot * dir;
 	eye = rot * eye;
 
@@ -169,10 +225,15 @@ void main()
     float depth = clip_far;
 	vec3 n = vec3( 0.0 );
 
-	color = vec3(1, 1, 1);
+	vec3 color;// = vec3(1, 1, 1);
 	if (ray_marching(eye, dir, depth, n)) 
 	{
-		color = vec3(0.5, 0.5, 0.5);
+		color = vec3(0, 0, 0);
 	}
+	
+	// shading
+	vec3 pos = eye + dir * depth;
 
+    color = shading( pos, n, dir, eye );
+	fragColor = pow( color, vec3(1.0/1.2) );
 }
