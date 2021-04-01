@@ -93,6 +93,43 @@ int main()
 
 	do
 	{
+		static GLfloat pitch=0, yaw=0;
+
+		{
+			static bool last = 0;
+			static double startx, starty;
+			static GLfloat startpitch=0, startyaw=0;
+
+			int press = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE);
+			if (press == GLFW_RELEASE && last)
+			{
+				last = 0;
+			}
+			else if (press == GLFW_PRESS)
+			{
+				double x, y;
+				glfwGetCursorPos(window, &x, &y);
+
+				if (!last)
+				{
+					startx = x;
+					starty = y;
+					startpitch = pitch;
+					startyaw = yaw;
+					last=1;
+				}
+				else
+				{
+					pitch = startpitch + (2*3.1415)*(starty-y)/768;
+					yaw = startyaw + (2*3.1415)*(startx-x)/1024;
+				}
+			}
+			
+		}
+
+		
+
+
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -102,7 +139,7 @@ int main()
 		// Send our transformation to the currently bound shader,  
 		// in the "MVP" uniform 
 		static int i = 0;
-		GLfloat pitch=-3.14f/4.0f/2.0f, yaw=i/100.0f;
+		// GLfloat pitch=-3.14f/4.0f/2.0f, yaw=i/100.0f;
 		i++;
 		glUniform2f(RotID, pitch, yaw); 
 
