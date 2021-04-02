@@ -126,9 +126,13 @@ int main()
 			}
 		}
 
-		glm::vec3 camPosition = {0, 0, -3};
-		glm::vec3 camTarget = {0, 0, 0};
+		glm::vec3 camPosition = {0, 0, 0};
+		glm::vec3 camTarget = {0, 0, -1};
 		glm::mat4 viewMat = glm::lookAt(camPosition, camTarget, glm::vec3{0,1,0});
+		viewMat = glm::rotate(glm::mat4(1), yaw, glm::vec3(0, 1, 0)) * 
+			glm::rotate(glm::mat4(1), pitch, glm::vec3(1, 0, 0)) * 
+			glm::translate(glm::mat4(1), glm::vec3(0, 0, 3.5)) *
+			viewMat;
 
 		// for (int i=0; i<4; i++)
 		// {

@@ -255,5 +255,5 @@ void main()
 
 	// color = shading(pos, n, dir, eye);
 	// fragColor = pow(color, vec3(1.0/1.2));
-	fragColor = vec3(1)*1/depth;
+	fragColor = vec3(1)*1.0/depth;
 }
