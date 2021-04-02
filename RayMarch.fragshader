@@ -1,14 +1,11 @@
 #version 330 core
 
-// Interpolated values from the vertex shaders
-in vec3 fragmentColor;
+//Input Data
 in vec4 gl_FragCoord;
+uniform mat4 ViewMat;
 
-// Ouput data
+//Ouput data
 out vec3 fragColor;
-
-// Values that stay constant for the whole mesh. 
-uniform vec2 ROT; 
 
 
 // ray marching
@@ -172,14 +169,15 @@ vec3 ray_dir(float fov, vec2 size, vec2 pos)
 }
 
 // ray marching
-bool ray_marching(vec3 o, vec3 dir, inout float depth, inout vec3 n)
+bool ray_marching(vec3 dir, inout float depth, inout vec3 n)
 {
 	float t = 0.0;
 	float d = 10000.0;
 	float dt = 0.0;
 	for (int i=0; i<max_iterations; i++) 
 	{
-		vec3 v = o + dir * t;
+		// vec3 v = eye + dir * t;
+		vec3 v = (ViewMat * vec4(dir*t,1)).xyz;
 		d = dist_field(v);
 		if (d < 0.001)
 		{
@@ -204,7 +202,8 @@ bool ray_marching(vec3 o, vec3 dir, inout float depth, inout vec3 n)
 	{
 		dt *= 0.5;
 		
-		vec3 v = o + dir * (t + dt);
+		// vec3 v = eye + dir * (t + dt);
+		vec3 v = (ViewMat * vec4(dir*(t+dt),1)).xyz;
 		if (dist_field(v) >= 0.001)
 		{
 			t += dt;
@@ -212,7 +211,7 @@ bool ray_marching(vec3 o, vec3 dir, inout float depth, inout vec3 n)
 	}
 	
 	depth = t;
-	n = normalize(gradient(o + dir * t));
+	// n = normalize(gradient(eye + dir * t));
 	return true;
 }
 
@@ -235,30 +234,26 @@ void main()
 
 	// default ray dir
 	vec3 dir = ray_dir(45.0, iResolution.xy, gl_FragCoord.xy );
-	// default ray origin
-	vec3 eye = vec3( 0.0, 0.0, 3.5 );
-
-	// rotate camera
-	mat3 rot = rotationXY(ROT.xy);
-	dir = rot * dir;
-	eye = rot * eye;
 
 	// ray marching
 	float depth = clip_far;
 	vec3 n = vec3( 0.0 );
 
 	vec3 color;// = vec3(1, 1, 1);
-	if (!ray_marching(eye, dir, depth, n)) 
+	if (!ray_marching(dir, depth, n)) 
 	{
 		// fragColor = vec3(0.1, 0.1, 0.1);
 		// return;
-		n=normalize(vec3(1,1,1)*dir)+0.05;
-		depth=1;
+		// n=normalize(vec3(1,1,1)*dir)+0.05;
+		// depth=1;
+		fragColor = vec3(0);
+		return;
 	}
-	
-	// shading
-	vec3 pos = eye + dir * depth;
 
-	color = shading(pos, n, dir, eye);
-	fragColor = pow(color, vec3(1.0/1.2));
+	// shading
+	// vec3 pos = dir * depth;
+
+	// color = shading(pos, n, dir, eye);
+	// fragColor = pow(color, vec3(1.0/1.2));
+	fragColor = vec3(1)*1/depth;
 }

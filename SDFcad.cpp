@@ -72,7 +72,7 @@ int main()
 
 
 	// Get a handle for our "ROT" uniform 
-	GLuint RotID = glGetUniformLocation(programID, "ROT"); 
+	GLuint viewMatID = glGetUniformLocation(programID, "ViewMat"); 
 
 	// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
 	// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
@@ -124,10 +124,21 @@ int main()
 					yaw = startyaw + (2*3.1415)*(startx-x)/1024;
 				}
 			}
-			
 		}
 
-		
+		glm::vec3 camPosition = {0, 0, -3};
+		glm::vec3 camTarget = {0, 0, 0};
+		glm::mat4 viewMat = glm::lookAt(camPosition, camTarget, glm::vec3{0,1,0});
+
+		// for (int i=0; i<4; i++)
+		// {
+		// 	for (int j=0; j<4; j++)
+		// 	{
+		// 		printf("%f ", viewMat[i][j]);
+		// 	}
+		// 	printf("\n");
+		// }
+		// printf("\n");
 
 
 		// Clear the screen
@@ -141,7 +152,7 @@ int main()
 		static int i = 0;
 		// GLfloat pitch=-3.14f/4.0f/2.0f, yaw=i/100.0f;
 		i++;
-		glUniform2f(RotID, pitch, yaw); 
+		glUniformMatrix4fv(viewMatID, 1, false, &viewMat[0][0]);
 
 		// 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
