@@ -78,7 +78,7 @@ int main()
 	glBindVertexArray(VertexArrayID);
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders( "TransformVertexShader.vertexshader", "RayMarch.fragshader" );
+	GLuint programID = LoadShaders( "TransformVertexShader.vert", "RayMarch.frag" );
 	if (programID==(GLuint)-1)
 	{
 		return -1;
