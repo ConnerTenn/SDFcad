@@ -11,7 +11,7 @@ out vec3 fragColor;
 #include "SDF.frag"
 
 // get distance in the world
-float dist_field(vec3 p)
+float SignedDistance(vec3 p)
 {
 	//  p = sdRep( p, vec3( 4.0 ) );
 	//  p = sdTwist( p, 3.0 );
@@ -27,7 +27,7 @@ float dist_field(vec3 p)
 }
 
 // get ray direction
-vec3 ray_dir(float fov, vec2 size, vec2 pos) 
+vec3 RayDir(float fov, vec2 size, vec2 pos) 
 {
 	vec2 xy = pos - size * 0.5;
 
@@ -44,7 +44,7 @@ const float StopThreshold = 0.001;
 const float ClipFar = 1000.0;
 
 // ray marching
-bool ray_marching(vec3 dir, inout float depth, out int iter)
+bool RayMarch(vec3 dir, inout float depth, out int iter)
 {
 	depth = 0.0;
 	float dist = 0.0;
@@ -53,7 +53,7 @@ bool ray_marching(vec3 dir, inout float depth, out int iter)
 	{
 		vec3 v = (ViewMat * vec4(dir*depth,1)).xyz;
 
-		dist = dist_field(v);
+		dist = SignedDistance(v);
 		if (dist < StopThreshold)
 		{
 			iter = i;
@@ -81,15 +81,15 @@ mat3 rotationXY(vec2 angle)
 
 void main()
 {
-	vec2 iResolution = vec2(1024, 768);
+	vec2 resolution = vec2(1024, 768);
 
 	// default ray dir
-	vec3 dir = ray_dir(45.0, iResolution.xy, gl_FragCoord.xy );
+	vec3 dir = RayDir(45.0, resolution.xy, gl_FragCoord.xy );
 
 	// ray marching
 	float depth = 0;
 	int iter = 0;
-	if (!ray_marching(dir, depth, iter)) 
+	if (!RayMarch(dir, depth, iter)) 
 	{
 		fragColor = vec3(0);
 		return;
@@ -97,3 +97,4 @@ void main()
 
 	fragColor = vec3(1.0/depth + 2.0*iter/MaxIter);
 }
+
