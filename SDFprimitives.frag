@@ -15,7 +15,6 @@ float sdBox(vec3 p, vec3 b)
   return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
 }
 
-
 float sdUnion(float d0, float d1)
 {
 	return min(d0, d1);
