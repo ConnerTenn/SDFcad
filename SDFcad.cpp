@@ -16,6 +16,13 @@ using namespace glm;
 
 #include "shader.hpp"
 
+GLfloat Zoom=3.5;
+
+void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	Zoom = Zoom * (yoffset>=0 ? 0.9 : 1.1);
+}
+
 int main()
 {
 	// Initialise GLFW
@@ -31,6 +38,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 
 	// Open a window and create its OpenGL context
 	window = glfwCreateWindow(1024, 768, "SDFcad", NULL, NULL);
@@ -53,6 +61,8 @@ int main()
 
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+
+	glfwSetScrollCallback(window, ScrollCallback);
 
 	// Dark blue background
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -131,7 +141,7 @@ int main()
 		glm::mat4 viewMat = glm::lookAt(camPosition, camTarget, glm::vec3{0,1,0});
 		viewMat = glm::rotate(glm::mat4(1), yaw, glm::vec3(0, 1, 0)) * 
 			glm::rotate(glm::mat4(1), pitch, glm::vec3(1, 0, 0)) * 
-			glm::translate(glm::mat4(1), glm::vec3(0, 0, 3.5)) *
+			glm::translate(glm::mat4(1), glm::vec3(0, 0, Zoom)) *
 			viewMat;
 
 		// for (int i=0; i<4; i++)
