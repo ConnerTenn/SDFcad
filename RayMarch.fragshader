@@ -8,12 +8,6 @@ uniform mat4 ViewMat;
 out vec3 fragColor;
 
 
-// ray marching
-const int max_iterations = 256;
-const float stop_threshold = 0.001;
-const float grad_step = 0.02;
-const float clip_far = 1000.0;
-
 // math
 const float PI = 3.14159265359;
 const float DEG_TO_RAD = PI / 180.0;
@@ -97,50 +91,33 @@ vec3 ray_dir(float fov, vec2 size, vec2 pos)
 	return normalize(vec3(xy, -z));
 }
 
+
+// ray marching
+const int max_iterations = 256;
+const float stop_threshold = 0.001;
+const float grad_step = 0.02;
+const float clip_far = 1000.0;
+
 // ray marching
 bool ray_marching(vec3 dir, inout float depth)
 {
-	float t = 0.0;
-	float d = 10000.0;
+	depth = 0.0;
+	float dist = 0.0;
 	float dt = 0.0;
-	for (int i=0; i<max_iterations; i++) 
+	for (int i=0; i<max_iterations && depth<=clip_far; i++) 
 	{
-		// vec3 v = eye + dir * t;
-		vec3 v = (ViewMat * vec4(dir*t,1)).xyz;
-		d = dist_field(v);
-		if (d < 0.001)
+		vec3 v = (ViewMat * vec4(dir*depth,1)).xyz;
+
+		dist = dist_field(v);
+		if (dist < stop_threshold)
 		{
-			break;
+			return true;
 		}
-		dt = min(abs(d), 0.1);
-		t += dt;
-		
-		if (t > depth)
-		{
-			break;
-		}
+
+		depth += abs(dist);
 	}
-	
-	if (d >= 0.001)
-	{
-		return false;
-	}
-	
-	t -= dt;
-	for (int i = 0; i < max_iterations/16; i++)
-	{
-		dt *= 0.5;
-		
-		// vec3 v = eye + dir * (t + dt);
-		vec3 v = (ViewMat * vec4(dir*(t+dt),1)).xyz;
-		if (dist_field(v) >= 0.001)
-		{
-			t += dt;
-		}
-	}
-	
-	depth = t;
-	return true;
+
+	return false;
 }
 
 // camera rotation : pitch, yaw
@@ -164,9 +141,7 @@ void main()
 	vec3 dir = ray_dir(45.0, iResolution.xy, gl_FragCoord.xy );
 
 	// ray marching
-	float depth = clip_far;
-	vec3 n = vec3( 0.0 );
-
+	float depth = 0;
 	if (!ray_marching(dir, depth)) 
 	{
 		fragColor = vec3(0);
