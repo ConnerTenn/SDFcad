@@ -98,7 +98,7 @@ const float StopThreshold = 0.001;
 const float ClipFar = 1000.0;
 
 // ray marching
-bool ray_marching(vec3 dir, inout float depth)
+bool ray_marching(vec3 dir, inout float depth, out int iter)
 {
 	depth = 0.0;
 	float dist = 0.0;
@@ -110,6 +110,7 @@ bool ray_marching(vec3 dir, inout float depth)
 		dist = dist_field(v);
 		if (dist < StopThreshold)
 		{
+			iter = i;
 			return true;
 		}
 
@@ -141,11 +142,12 @@ void main()
 
 	// ray marching
 	float depth = 0;
-	if (!ray_marching(dir, depth)) 
+	int iter = 0;
+	if (!ray_marching(dir, depth, iter)) 
 	{
 		fragColor = vec3(0);
 		return;
 	}
 
-	fragColor = vec3(1/(depth));
+	fragColor = vec3(1.0/depth + 2.0*iter/MaxIter);
 }
