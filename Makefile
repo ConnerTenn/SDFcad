@@ -12,12 +12,15 @@ TARGET = SDFcad
 cpp_files = SDFcad.cpp shader.cpp
 objects = $(cpp_files:.cpp=.o)
 
-all: clean $(TARGET)
+all: clean shader.frag $(TARGET)
 
 $(TARGET): $(objects) 
 	$(CXX) -o $@ $^ $(LDFLAGS)
 
+shader.frag:
+	cpp -P RayMarch.frag -o $@
+
 .PHONY : clean
 clean :
-	-rm $(TARGET) $(objects)
+	-rm $(TARGET) shader.frag $(objects)
 
