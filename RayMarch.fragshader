@@ -93,10 +93,9 @@ vec3 ray_dir(float fov, vec2 size, vec2 pos)
 
 
 // ray marching
-const int max_iterations = 256;
-const float stop_threshold = 0.001;
-const float grad_step = 0.02;
-const float clip_far = 1000.0;
+const int MaxIter = 256;
+const float StopThreshold = 0.001;
+const float ClipFar = 1000.0;
 
 // ray marching
 bool ray_marching(vec3 dir, inout float depth)
@@ -104,12 +103,12 @@ bool ray_marching(vec3 dir, inout float depth)
 	depth = 0.0;
 	float dist = 0.0;
 	float dt = 0.0;
-	for (int i=0; i<max_iterations && depth<=clip_far; i++) 
+	for (int i=0; i<MaxIter && depth<=ClipFar; i++) 
 	{
 		vec3 v = (ViewMat * vec4(dir*depth,1)).xyz;
 
 		dist = dist_field(v);
-		if (dist < stop_threshold)
+		if (dist < StopThreshold)
 		{
 			return true;
 		}
