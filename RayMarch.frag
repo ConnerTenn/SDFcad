@@ -8,23 +8,9 @@ uniform mat4 ViewMat;
 //Ouput data
 out vec3 fragColor;
 
+#include "SDFprimitives.frag"
+
 #include "SDF.frag"
-
-// get distance in the world
-float SignedDistance(vec3 p)
-{
-	//  p = sdRep( p, vec3( 4.0 ) );
-	//  p = sdTwist( p, 3.0 );
-	
-	float d0 = sdBox(p, vec3(0.5));
-	float d1 = sdSphere(p, 0.6);
-	
-	float d = sdInter(d1, d0) + sin(p.y*2*PI*10.0f)/100.0f + sin(p.x*2*PI*10.0f)/500.0f + sin(p.z*2*PI*10.0f)/500.0f;
-
-	return d;
-	//return d + sfDisp( p * 2.5 );
-	//return sdUnion_s( d + sfDisp( p * 2.5 * sin( iTime * 1.01 ) ), d1, 0.1 );
-}
 
 // get ray direction
 vec3 RayDir(float fov, vec2 size, vec2 pos) 
@@ -33,10 +19,9 @@ vec3 RayDir(float fov, vec2 size, vec2 pos)
 
 	float cot_half_fov = tan( (90.0 - fov*0.5) * DEG_TO_RAD );	
 	float z = (size.x * 0.5) * cot_half_fov;
-	
+
 	return normalize(vec3(xy, -z));
 }
-
 
 // ray marching
 const int MaxIter = 256;
