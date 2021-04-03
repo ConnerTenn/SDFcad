@@ -1,7 +1,9 @@
+#version 400
 
 in vec4 gl_FragCoord;
 
 in vec3 color;
+
 out vec3 fragColor;
 
 void main()

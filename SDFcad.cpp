@@ -1,5 +1,6 @@
 // Include standard headers
 #include <stdio.h>
+#include <iostream>
 #include <stdlib.h>
 
 // Include GLEW
@@ -95,9 +96,10 @@ int main()
 	}
 
 
-	// Get a handle for our "ROT" uniform 
+	GLuint MvpID = glGetUniformLocation(programID, "MVP");
+
 #ifdef RAYMARCH
-	GLuint viewMatID = glGetUniformLocation(programID, "ViewMat");
+	GLuint viewMatID = glGetUniformLocation(programID, "ViewMat"); 
 
 
 	// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
@@ -118,9 +120,9 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
 #else
-	GLuint MvpID = glGetUniformLocation(programID, "MVP");
-
+	std::cout << "Generating Marching Cubes...\n";
 	std::vector<vec3> vertices = MarchingCubes();
+	std::cout << "Marching Cubes generated (" << vertices.size() << " vertices)\n";
 	
 	GLfloat g_vertex_buffer_data[vertices.size()*3];
 
@@ -129,7 +131,9 @@ int main()
 		g_vertex_buffer_data[i*3+0] = vertices[i].x;
 		g_vertex_buffer_data[i*3+1] = vertices[i].y;
 		g_vertex_buffer_data[i*3+2] = vertices[i].z;
+		// std::cout << vertices[i].x << " " << vertices[i].y << " " << vertices[i].z << "\n";
 	}
+	std::cout << "Copied vertices\n";
 
 	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);
@@ -137,6 +141,7 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*vertices.size()*3, g_vertex_buffer_data, GL_STATIC_DRAW);
 #endif
 
+	std::cout << "Entering Main Loop\n";
 	do
 	{
 		static GLfloat pitch=0, yaw=0;
@@ -172,14 +177,6 @@ int main()
 			}
 		}
 
-		glm::vec3 camPosition = {0, 0, 0};
-		glm::vec3 camTarget = {0, 0, -1};
-		glm::mat4 viewMat = glm::lookAt(camPosition, camTarget, glm::vec3{0,1,0});
-		viewMat = glm::rotate(glm::mat4(1), yaw, glm::vec3(0, 1, 0)) * 
-			glm::rotate(glm::mat4(1), pitch, glm::vec3(1, 0, 0)) * 
-			glm::translate(glm::mat4(1), glm::vec3(0, 0, Zoom)) *
-			viewMat;
-
 		// for (int i=0; i<4; i++)
 		// {
 		// 	for (int j=0; j<4; j++)
@@ -197,16 +194,31 @@ int main()
 		// Use our shader
 		glUseProgram(programID);
 
-		// Send our transformation to the currently bound shader,  
-		// in the "MVP" uniform 
-		static int i = 0;
-		// GLfloat pitch=-3.14f/4.0f/2.0f, yaw=i/100.0f;
-		i++;
-
 #ifdef RAYMARCH
+		glm::vec3 camPosition = {0, 0, 0};
+		glm::vec3 camTarget = {0, 0, -1};
+		glm::mat4 viewMat = glm::lookAt(camPosition, camTarget, glm::vec3{0,1,0});
+		viewMat = glm::rotate(glm::mat4(1), yaw, glm::vec3(0, 1, 0)) * 
+			glm::rotate(glm::mat4(1), pitch, glm::vec3(1, 0, 0)) * 
+			glm::translate(glm::mat4(1), glm::vec3(0, 0, Zoom)) *
+			viewMat;
+
+		glm::mat4 mvp = glm::mat4(1);
+		glUniformMatrix4fv(MvpID, 1, false, &mvp[0][0]);
 		glUniformMatrix4fv(viewMatID, 1, false, &viewMat[0][0]);
 #else
-		glUniformMatrix4fv(MvpID, 1, false, &viewMat[0][0]);
+		glm::vec3 camPosition = {0, 0, 0};
+		glm::vec3 camTarget = {0, 0, -1};
+		glm::mat4 viewMat = glm::lookAt(camPosition, camTarget, glm::vec3{0,1,0});
+		viewMat = 
+			glm::translate(glm::mat4(1), glm::vec3(0, 0, -Zoom)) *
+			glm::rotate(glm::mat4(1), -pitch, glm::vec3(1, 0, 0)) *
+			glm::rotate(glm::mat4(1), -yaw, glm::vec3(0, 1, 0)) *
+			viewMat;
+
+		glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+		glm::mat4 mvp        = Projection * viewMat; // Remember, matrix multiplication is the other way around
+		glUniformMatrix4fv(MvpID, 1, false, &mvp[0][0]);
 #endif
 
 		// 1rst attribute buffer : vertices
@@ -221,8 +233,13 @@ int main()
 			(void*)0            // array buffer offset
 		);
 
-		// Draw the triangle !
+		// Draw the triangles!
+		
+#ifdef RAYMARCH
 		glDrawArrays(GL_TRIANGLES, 0, 2*3); // 12*3 indices starting at 0 -> 12 triangles
+#else
+		glDrawArrays(GL_TRIANGLES, 0, vertices.size()*3);
+#endif
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);

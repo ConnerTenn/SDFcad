@@ -27,7 +27,7 @@ std::vector<vec3> MarchingCubes()
 	std::vector<vec3> triangleList;
 
 	const float dimensions = 5.0f;
-	const float resolution = 100.0f;
+	const float resolution = 1.0f;
 
 	const int bounds = dimensions*resolution;
 	for (int x=-bounds; x<=bounds; x++)
