@@ -2,7 +2,7 @@
 *.o
 
 SDFcad
+RayMarch.fragshader
 
 .vscode/
 
-shader.frag
