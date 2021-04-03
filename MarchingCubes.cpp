@@ -180,7 +180,7 @@ void RecursiveMarch(vec3 xyz, float step, int recurse)//, int depth)
 	// std::cout << xyz.x << " " << xyz.y << " " << xyz.z << "\n";
 	float dist = SignedDistance(xyz);
 
-	if (abs(dist) <= step*1.5 && recurse)
+	if (abs(dist) <= step*2.0f && recurse)
 	{
 		RecursiveMarch(xyz+vec3(-step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1);//, depth+1);
 		RecursiveMarch(xyz+vec3( step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1);//, depth+1);
