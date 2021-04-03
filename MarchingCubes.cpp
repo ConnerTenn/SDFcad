@@ -171,26 +171,26 @@ unsigned int NumEntries;
 
 #define BUFF_STEP_SIZE (100*1000*3*3)
 
-void RecursiveMarch(vec3 xyz, float step, int recurse, int depth)
+void RecursiveMarch(vec3 xyz, float step, int recurse)//, int depth)
 {
-	for (int i=0; i<depth; i++)
-	{
-		std::cout << "  ";
-	}
-	std::cout << xyz.x << " " << xyz.y << " " << xyz.z << "\n";
+	// for (int i=0; i<depth; i++)
+	// {
+	// 	std::cout << "  ";
+	// }
+	// std::cout << xyz.x << " " << xyz.y << " " << xyz.z << "\n";
 	float dist = SignedDistance(xyz);
 
 	if (/*abs(dist) <= step/4.0f &&*/ recurse)
 	{
-		RecursiveMarch(xyz+vec3(-step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, depth+1);
-		RecursiveMarch(xyz+vec3( step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, depth+1);
-		RecursiveMarch(xyz+vec3( step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1, depth+1);
-		RecursiveMarch(xyz+vec3(-step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, depth+1);
+		RecursiveMarch(xyz+vec3(-step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1);//, depth+1);
+		RecursiveMarch(xyz+vec3( step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1);//, depth+1);
+		RecursiveMarch(xyz+vec3( step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1);//, depth+1);
+		RecursiveMarch(xyz+vec3(-step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1);//, depth+1);
 
-		RecursiveMarch(xyz+vec3(-step/4.0f,+step/4.0f,-step/4.0f), step/2.0f, recurse-1, depth+1);
-		RecursiveMarch(xyz+vec3( step/4.0f,+step/4.0f,-step/4.0f), step/2.0f, recurse-1, depth+1);
-		RecursiveMarch(xyz+vec3( step/4.0f,+step/4.0f, step/4.0f), step/2.0f, recurse-1, depth+1);
-		RecursiveMarch(xyz+vec3(-step/4.0f,+step/4.0f,-step/4.0f), step/2.0f, recurse-1, depth+1);
+		RecursiveMarch(xyz+vec3(-step/4.0f,+step/4.0f,-step/4.0f), step/2.0f, recurse-1);//, depth+1);
+		RecursiveMarch(xyz+vec3( step/4.0f,+step/4.0f,-step/4.0f), step/2.0f, recurse-1);//, depth+1);
+		RecursiveMarch(xyz+vec3( step/4.0f,+step/4.0f, step/4.0f), step/2.0f, recurse-1);//, depth+1);
+		RecursiveMarch(xyz+vec3(-step/4.0f,+step/4.0f, step/4.0f), step/2.0f, recurse-1);//, depth+1);
 	}
 	else
 	{
@@ -199,12 +199,12 @@ void RecursiveMarch(vec3 xyz, float step, int recurse, int depth)
 		grid.p[0] = xyz+vec3(-step/2.0f,-step/2.0f,-step/2.0f);
 		grid.p[1] = xyz+vec3( step/2.0f,-step/2.0f,-step/2.0f);
 		grid.p[2] = xyz+vec3( step/2.0f,-step/2.0f, step/2.0f);
-		grid.p[3] = xyz+vec3(-step/2.0f,-step/2.0f,-step/2.0f);
+		grid.p[3] = xyz+vec3(-step/2.0f,-step/2.0f, step/2.0f);
 
-		grid.p[0] = xyz+vec3(-step/2.0f,+step/2.0f,-step/2.0f);
-		grid.p[1] = xyz+vec3( step/2.0f,+step/2.0f,-step/2.0f);
-		grid.p[2] = xyz+vec3( step/2.0f,+step/2.0f, step/2.0f);
-		grid.p[3] = xyz+vec3(-step/2.0f,+step/2.0f,-step/2.0f);
+		grid.p[4] = xyz+vec3(-step/2.0f,+step/2.0f,-step/2.0f);
+		grid.p[5] = xyz+vec3( step/2.0f,+step/2.0f,-step/2.0f);
+		grid.p[6] = xyz+vec3( step/2.0f,+step/2.0f, step/2.0f);
+		grid.p[7] = xyz+vec3(-step/2.0f,+step/2.0f, step/2.0f);
 
 
 		grid.val[0] = SignedDistance(grid.p[0]);
@@ -250,7 +250,7 @@ float *MarchingCubes2(unsigned int *numEntries)
 	VertexData = (float *)malloc(sizeof(float)*VertDataSize);
 	NumEntries=0;
 
-	RecursiveMarch(vec3(0.0f), 3.0f, 3, 0);
+	RecursiveMarch(vec3(0.0f), 3.0f, 5);//, 0);
 
 	*numEntries = NumEntries;
 	return VertexData;
