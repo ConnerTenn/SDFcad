@@ -1,4 +1,5 @@
 
+#include <iostream>
 
 // Include GLM
 #include <glm/glm.hpp>
@@ -26,8 +27,8 @@ std::vector<vec3> MarchingCubes()
 {
 	std::vector<vec3> triangleList;
 
-	const float dimensions = 5.0f;
-	const float resolution = 1.0f;
+	const float dimensions = 3.0f;
+	const float resolution = 10.0f;
 
 	const int bounds = dimensions*resolution;
 	for (int x=-bounds; x<=bounds; x++)
@@ -37,18 +38,19 @@ std::vector<vec3> MarchingCubes()
 			for (int z=-bounds; z<=bounds; z++)
 			{
 				vec3 pos = vec3(x/resolution, y/resolution, z/resolution);
+				// std::cout << pos.x << " " << pos.y << " " << pos.z << "\n";
 
 				TRIANGLE triangles[5];
 				GRIDCELL grid;
-				grid.p[0] = vec3(pos.x-0.5, pos.y-0.5, pos.z-0.5);
-				grid.p[1] = vec3(pos.x+0.5, pos.y-0.5, pos.z-0.5);
-				grid.p[2] = vec3(pos.x+0.5, pos.y-0.5, pos.z+0.5);
-				grid.p[1] = vec3(pos.x-0.5, pos.y-0.5, pos.z+0.5);
+				grid.p[0] = vec3(pos.x-0.5/resolution, pos.y-0.5/resolution, pos.z-0.5/resolution);
+				grid.p[1] = vec3(pos.x+0.5/resolution, pos.y-0.5/resolution, pos.z-0.5/resolution);
+				grid.p[2] = vec3(pos.x+0.5/resolution, pos.y-0.5/resolution, pos.z+0.5/resolution);
+				grid.p[3] = vec3(pos.x-0.5/resolution, pos.y-0.5/resolution, pos.z+0.5/resolution);
 
-				grid.p[0] = vec3(pos.x-0.5, pos.y+0.5, pos.z-0.5);
-				grid.p[1] = vec3(pos.x+0.5, pos.y+0.5, pos.z-0.5);
-				grid.p[2] = vec3(pos.x+0.5, pos.y+0.5, pos.z+0.5);
-				grid.p[1] = vec3(pos.x-0.5, pos.y+0.5, pos.z+0.5);
+				grid.p[4] = vec3(pos.x-0.5/resolution, pos.y+0.5/resolution, pos.z-0.5/resolution);
+				grid.p[5] = vec3(pos.x+0.5/resolution, pos.y+0.5/resolution, pos.z-0.5/resolution);
+				grid.p[6] = vec3(pos.x+0.5/resolution, pos.y+0.5/resolution, pos.z+0.5/resolution);
+				grid.p[7] = vec3(pos.x-0.5/resolution, pos.y+0.5/resolution, pos.z+0.5/resolution);
 
 
 				for (int i=0; i<8; i++)

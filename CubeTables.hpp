@@ -35,11 +35,14 @@ XYZ VertexInterp(float isolevel, XYZ p1, XYZ p2, float valp1, float valp2)
 	if (abs(valp1-valp2) < 0.00001)
 		return(p1);
 	mu = (isolevel - valp1) / (valp2 - valp1);
-	p.x = p1.x + mu * (p2.x - p1.x);
-	p.y = p1.y + mu * (p2.y - p1.y);
-	p.z = p1.z + mu * (p2.z - p1.z);
+	// p.x = p1.x + mu * (p2.x - p1.x);
+	// p.y = p1.y + mu * (p2.y - p1.y);
+	// p.z = p1.z + mu * (p2.z - p1.z);
+	p = p1 + mu*(p2-p1);
 
-	return(p);
+	// p = (p1+p2)/2.0f;
+
+	return p;
 }
 
 
