@@ -121,24 +121,15 @@ int main()
 
 #else
 	std::cout << "Generating Marching Cubes...\n";
-	std::vector<vec3> vertices = MarchingCubes();
-	std::cout << "Marching Cubes generated (" << vertices.size() << " vertices)\n";
-	
-	GLfloat g_vertex_buffer_data[vertices.size()*3];
-
-	for (unsigned int i=0; i<vertices.size(); i++)
-	{
-		g_vertex_buffer_data[i*3+0] = vertices[i].x;
-		g_vertex_buffer_data[i*3+1] = vertices[i].y;
-		g_vertex_buffer_data[i*3+2] = vertices[i].z;
-		// std::cout << vertices[i].x << " " << vertices[i].y << " " << vertices[i].z << "\n";
-	}
-	std::cout << "Copied vertices\n";
+	unsigned int numEntries;
+	float *vertexData = MarchingCubes(&numEntries);
+	std::cout << "Marching Cubes generated (" << numEntries/3 << " vertices)\n";
 
 	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*vertices.size()*3, g_vertex_buffer_data, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*numEntries, vertexData, GL_STATIC_DRAW);
+	free(vertexData);
 #endif
 
 	std::cout << "Entering Main Loop\n";
@@ -238,7 +229,7 @@ int main()
 #ifdef RAYMARCH
 		glDrawArrays(GL_TRIANGLES, 0, 2*3); // 12*3 indices starting at 0 -> 12 triangles
 #else
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size()*3);
+		glDrawArrays(GL_TRIANGLES, 0, numEntries);
 #endif
 
 		glDisableVertexAttribArray(0);

@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <stdlib.h>
 
 // Include GLM
 #include <glm/glm.hpp>
@@ -52,14 +53,19 @@ float SignedDistance(vec3 p)
 
 
 
-std::vector<vec3> MarchingCubes()
+float *MarchingCubes(unsigned int *numEntries)
 {
-	std::vector<vec3> triangleList;
-
 	const float dimensions = 2.0f;
 	const float resolution = 20.0f;
 
-	const int bounds = dimensions*resolution;
+	const unsigned int dimres = ceil(dimensions*resolution);
+	const unsigned int maxSize = dimres*dimres*dimres * (8*3);
+
+	unsigned int bufferSize = maxSize;
+	float *vertexData = (float *)malloc(sizeof(float)*bufferSize);
+	*numEntries = 0;
+
+	const int bounds = dimres;
 	for (int x=-bounds; x<=bounds; x++)
 	{
 		for (int y=-bounds; y<=bounds; y++)
@@ -91,14 +97,28 @@ std::vector<vec3> MarchingCubes()
 
 				for (int i=0; i<numtri; i++)
 				{
-					triangleList.push_back(triangles[i].p[0]);
-					triangleList.push_back(triangles[i].p[1]);
-					triangleList.push_back(triangles[i].p[2]);
+					vertexData[(*numEntries)++] = triangles[i].p[0].x;
+					vertexData[(*numEntries)++] = triangles[i].p[0].y;
+					vertexData[(*numEntries)++] = triangles[i].p[0].z;
+
+					vertexData[(*numEntries)++] = triangles[i].p[1].x;
+					vertexData[(*numEntries)++] = triangles[i].p[1].y;
+					vertexData[(*numEntries)++] = triangles[i].p[1].z;
+
+					vertexData[(*numEntries)++] = triangles[i].p[2].x;
+					vertexData[(*numEntries)++] = triangles[i].p[2].y;
+					vertexData[(*numEntries)++] = triangles[i].p[2].z;
+
+					// if ((*numEntries) == bufferSize)
+					// {
+					// 	bufferSize += 1000*3*3;
+					// 	vertexData = (float *)realloc(vertexData, sizeof(float)*bufferSize);
+					// }
 				}
 			}
 		}
 	}
 
-	return triangleList;
+	return vertexData;
 }
 

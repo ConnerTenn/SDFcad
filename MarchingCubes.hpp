@@ -1,5 +1,5 @@
 
 #include <vector>
 
-std::vector<vec3> MarchingCubes();
+float *MarchingCubes(unsigned int *numEntries);
 
