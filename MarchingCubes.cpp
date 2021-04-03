@@ -180,7 +180,7 @@ void RecursiveMarch(vec3 xyz, float step, int recurse)//, int depth)
 	// std::cout << xyz.x << " " << xyz.y << " " << xyz.z << "\n";
 	float dist = SignedDistance(xyz);
 
-	if (/*abs(dist) <= step/4.0f &&*/ recurse)
+	if (abs(dist) <= step*1.5 && recurse)
 	{
 		RecursiveMarch(xyz+vec3(-step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1);//, depth+1);
 		RecursiveMarch(xyz+vec3( step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1);//, depth+1);
@@ -235,8 +235,8 @@ void RecursiveMarch(vec3 xyz, float step, int recurse)//, int depth)
 
 			if (NumEntries+9 >= VertDataSize)
 			{
-				std::cout << "Realloc\n";
 				VertDataSize += BUFF_STEP_SIZE;
+				std::cout << "Realloc: " << sizeof(float)*VertDataSize/1000/1000 << "MB\n";
 				VertexData = (float *)realloc(VertexData, sizeof(float)*VertDataSize);
 			}
 		}
@@ -250,7 +250,13 @@ float *MarchingCubes2(unsigned int *numEntries)
 	VertexData = (float *)malloc(sizeof(float)*VertDataSize);
 	NumEntries=0;
 
-	RecursiveMarch(vec3(0.0f), 3.0f, 5);//, 0);
+	struct timespec t1 = GetTime();
+	RecursiveMarch(vec3(0.0f), 10.0f, 10);//, 0);
+	struct timespec t2 = GetTime();
+
+    printf("Marching Cubes Calculation Time: ");
+    PrintDuration(t1, t2);
+	printf("\n");
 
 	*numEntries = NumEntries;
 	return VertexData;
