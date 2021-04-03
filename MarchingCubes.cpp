@@ -7,6 +7,8 @@ using namespace glm;
 
 #include "CubeTables.hpp"
 
+#include "MarchingCubes.hpp"
+
 float sdBox(vec3 p, vec3 b)
 {
 	vec3 d = abs(p) - b;
@@ -19,11 +21,10 @@ float SignedDistance(vec3 p)
 }
 
 
-#include <vector>
 
-std::vector<vec3[3]> MarchingCubes()
+std::vector<vec3> MarchingCubes()
 {
-	std::vector<vec3[3]> triangleList;
+	std::vector<vec3> triangleList;
 
 	const float dimensions = 5.0f;
 	const float resolution = 100.0f;
@@ -59,7 +60,9 @@ std::vector<vec3[3]> MarchingCubes()
 
 				for (int i=0; i<numtri; i++)
 				{
-					triangleList.push_back(triangles[i].p);
+					triangleList.push_back(triangles[i].p[0]);
+					triangleList.push_back(triangles[i].p[1]);
+					triangleList.push_back(triangles[i].p[2]);
 				}
 			}
 		}

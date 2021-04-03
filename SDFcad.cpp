@@ -15,6 +15,12 @@ GLFWwindow* window;
 using namespace glm;
 
 #include "shader.hpp"
+#include "MarchingCubes.hpp"
+
+
+
+// #define RAYMARCH
+
 
 GLfloat Zoom=3.5;
 
@@ -78,7 +84,11 @@ int main()
 	glBindVertexArray(VertexArrayID);
 
 	// Create and compile our GLSL program from the shaders
+#ifdef RAYMARCH
 	GLuint programID = LoadShaders( "TransformVertexShader.vertshader", "RayMarch.fragshader" );
+#else
+	GLuint programID = LoadShaders( "TransformVertexShader.vertshader", "Mesh.fragshader" );
+#endif
 	if (programID==(GLuint)-1)
 	{
 		return -1;
@@ -86,7 +96,9 @@ int main()
 
 
 	// Get a handle for our "ROT" uniform 
-	GLuint viewMatID = glGetUniformLocation(programID, "ViewMat"); 
+#ifdef RAYMARCH
+	GLuint viewMatID = glGetUniformLocation(programID, "ViewMat");
+
 
 	// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
 	// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
@@ -104,6 +116,26 @@ int main()
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+#else
+	GLuint MvpID = glGetUniformLocation(programID, "MVP");
+
+	std::vector<vec3> vertices = MarchingCubes();
+	
+	GLfloat g_vertex_buffer_data[vertices.size()*3];
+
+	for (unsigned int i=0; i<vertices.size(); i++)
+	{
+		g_vertex_buffer_data[i*3+0] = vertices[i].x;
+		g_vertex_buffer_data[i*3+1] = vertices[i].y;
+		g_vertex_buffer_data[i*3+2] = vertices[i].z;
+	}
+
+	GLuint vertexbuffer;
+	glGenBuffers(1, &vertexbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*vertices.size()*3, g_vertex_buffer_data, GL_STATIC_DRAW);
+#endif
 
 	do
 	{
@@ -170,7 +202,12 @@ int main()
 		static int i = 0;
 		// GLfloat pitch=-3.14f/4.0f/2.0f, yaw=i/100.0f;
 		i++;
+
+#ifdef RAYMARCH
 		glUniformMatrix4fv(viewMatID, 1, false, &viewMat[0][0]);
+#else
+		glUniformMatrix4fv(MvpID, 1, false, &viewMat[0][0]);
+#endif
 
 		// 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);

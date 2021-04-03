@@ -9,7 +9,7 @@ LDFLAGS += $(shell pkg-config --static --libs glfw3)
 LDFLAGS += $(shell pkg-config --static --libs glew)
 
 TARGET = SDFcad
-cpp_files = SDFcad.cpp shader.cpp
+cpp_files = SDFcad.cpp shader.cpp MarchingCubes.cpp
 objects = $(cpp_files:.cpp=.o)
 
 make = $(MAKE) --no-print-directory -j8
