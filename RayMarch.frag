@@ -1,4 +1,4 @@
-#define VERSION #version 330 core
+#define VERSION #version 400 core
 VERSION
 
 //Input Data
@@ -34,18 +34,19 @@ bool RayMarch(vec3 dir, inout float depth, out int iter)
 	depth = 0.0;
 	float dist = 0.0;
 	float dt = 0.0;
-	for (int i=0; i<MaxIter && depth<=ClipFar; i++) 
+	for (iter=0; iter<MaxIter && depth<=ClipFar; iter++) 
 	{
 		vec3 v = (ViewMat * vec4(dir*depth,1)).xyz;
 
 		dist = SignedDistance(v);
 		if (dist < StopThreshold)
 		{
-			iter = i;
 			return true;
 		}
 
-		depth += abs(dist);
+		//Divide by 4 to better handle non- smoothly decending functions
+		//Reduces rendering glitches of odd shapes
+		depth += abs(dist)/4.0;
 	}
 
 	return false;
@@ -76,10 +77,10 @@ void main()
 	int iter = 0;
 	if (!RayMarch(dir, depth, iter)) 
 	{
-		fragColor = vec3(0);
+		fragColor = vec3(0.3*float(iter)/MaxIter);
 		return;
 	}
 
-	fragColor = vec3(1.0/depth + 2.0*iter/MaxIter);
+	fragColor = vec3(1.0/depth + float(iter)/MaxIter);
 }
 

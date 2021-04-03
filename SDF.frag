@@ -12,8 +12,8 @@ float SignedDistance(vec3 p)
         sin(p.x*2*PI*10.0f)/500.0f + 
         sin(p.z*2*PI*10.0f)/500.0f;
 
-	return d;
-	//return d + sfDisp( p * 2.5 );
+	// return d;
+	return d + sfDisp( p * 2.5 );
 	// return sdUnion_s( d + sfDip( p * 2.5 * sin( iTime * 1.01 ) ), d1, 0.1 );
 }
 
