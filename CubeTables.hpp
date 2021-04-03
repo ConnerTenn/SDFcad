@@ -1,5 +1,12 @@
 
 
+// Include GLM
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+using namespace glm;
+
+#define XYZ vec3
+
 //http://paulbourke.net/geometry/polygonise/
 
 typedef struct {
@@ -8,8 +15,33 @@ typedef struct {
 
 typedef struct {
    XYZ p[8];
-   double val[8];
+   float val[8];
 } GRIDCELL;
+
+
+/*
+   Linearly interpolate the position where an isosurface cuts
+   an edge between two vertices, each with their own scalar value
+*/
+XYZ VertexInterp(float isolevel, XYZ p1, XYZ p2, float valp1, float valp2)
+{
+   float mu;
+   XYZ p;
+
+   if (abs(isolevel-valp1) < 0.00001)
+      return(p1);
+   if (abs(isolevel-valp2) < 0.00001)
+      return(p2);
+   if (abs(valp1-valp2) < 0.00001)
+      return(p1);
+   mu = (isolevel - valp1) / (valp2 - valp1);
+   p.x = p1.x + mu * (p2.x - p1.x);
+   p.y = p1.y + mu * (p2.y - p1.y);
+   p.z = p1.z + mu * (p2.z - p1.z);
+
+   return(p);
+}
+
 
 /*
    Given a grid cell and an isolevel, calculate the triangular
@@ -19,7 +51,7 @@ typedef struct {
 	0 will be returned if the grid cell is either totally above
    of totally below the isolevel.
 */
-int Polygonise(GRIDCELL grid,double isolevel,TRIANGLE *triangles)
+int Polygonise(GRIDCELL grid, float isolevel, TRIANGLE *triangles)
 {
    int i,ntriang;
    int cubeindex;
@@ -382,30 +414,4 @@ int triTable[256][16] =
    }
 
    return(ntriang);
-}
-
-/*
-   Linearly interpolate the position where an isosurface cuts
-   an edge between two vertices, each with their own scalar value
-*/
-XYZ VertexInterp(isolevel,p1,p2,valp1,valp2)
-double isolevel;
-XYZ p1,p2;
-double valp1,valp2;
-{
-   double mu;
-   XYZ p;
-
-   if (ABS(isolevel-valp1) < 0.00001)
-      return(p1);
-   if (ABS(isolevel-valp2) < 0.00001)
-      return(p2);
-   if (ABS(valp1-valp2) < 0.00001)
-      return(p1);
-   mu = (isolevel - valp1) / (valp2 - valp1);
-   p.x = p1.x + mu * (p2.x - p1.x);
-   p.y = p1.y + mu * (p2.y - p1.y);
-   p.z = p1.z + mu * (p2.z - p1.z);
-
-   return(p);
 }

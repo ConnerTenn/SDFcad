@@ -5,6 +5,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
+#include "CubeTables.hpp"
+
 float sdBox(vec3 p, vec3 b)
 {
   vec3 d = abs(p) - b;
@@ -21,6 +23,6 @@ float SignedDistance(vec3 p)
 
 std::vector<vec3> MarchingCubes()
 {
-    
+    return std::vector<vec3>();
 }
 
