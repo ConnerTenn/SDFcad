@@ -3,6 +3,11 @@
 const float PI = 3.14159265359;
 const float DEG_TO_RAD = PI / 180.0;
 
+vec3 translate(vec3 pos, vec3 move)
+{
+	return pos - move; 
+}
+
 // iq's distance function
 float sdSphere(vec3 pos, float r)
 {
