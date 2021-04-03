@@ -9,13 +9,13 @@ using namespace glm;
 
 float sdBox(vec3 p, vec3 b)
 {
-  vec3 d = abs(p) - b;
-  return min(max(d.x,max(d.y,d.z)),0.0f) + length(max(d,0.0f));
+	vec3 d = abs(p) - b;
+	return min(max(d.x,max(d.y,d.z)),0.0f) + length(max(d,0.0f));
 }
 
 float SignedDistance(vec3 p)
 {
-    return sdBox(p, vec3(0.5f));
+	return sdBox(p, vec3(0.5f));
 }
 
 
@@ -23,6 +23,6 @@ float SignedDistance(vec3 p)
 
 std::vector<vec3> MarchingCubes()
 {
-    return std::vector<vec3>();
+	return std::vector<vec3>();
 }
 
