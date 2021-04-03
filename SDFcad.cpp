@@ -18,7 +18,7 @@ using namespace glm;
 #include "shader.hpp"
 #include "MarchingCubes.hpp"
 
-
+#include "Common.hpp"
 
 // #define RAYMARCH
 

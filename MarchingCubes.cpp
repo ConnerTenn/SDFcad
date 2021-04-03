@@ -11,6 +11,8 @@ using namespace glm;
 
 #include "MarchingCubes.hpp"
 
+#include "Common.hpp"
+
 const float PI = 3.14159265359;
 vec3 translate(vec3 pos, vec3 move)
 {
@@ -68,7 +70,10 @@ float *MarchingCubes(unsigned int *numEntries)
 	typedef float Arr3D[dimres*2+1][dimres*2+1][dimres*2+1];
 	Arr3D *distanceArr = (Arr3D *)malloc(sizeof(Arr3D));
 
-	volatile const int bounds = dimres;
+	std::cout << "Allocated memory\n";
+
+	struct timespec t1 = GetTime();
+	const int bounds = dimres;
 	//Sample each point in the world space
 	for (int x=-bounds; x<=bounds; x++)
 	{
@@ -81,6 +86,7 @@ float *MarchingCubes(unsigned int *numEntries)
 			}
 		}
 	}
+	struct timespec t2 = GetTime();
 
 	//Run marching cubes algorithm
 	for (int x=-bounds; x<bounds; x++)
@@ -141,6 +147,16 @@ float *MarchingCubes(unsigned int *numEntries)
 			}
 		}
 	}
+	struct timespec t3 = GetTime();
+	printf("\n");
+    printf("Marching Cubes Calculation Time: ");
+	printf("\n  Gen distanceArr:  ");
+    PrintDuration(t1, t2);
+	printf("\n  Marching Cubes:   ");
+    PrintDuration(t2, t3);
+	printf("\n  Total:            ");
+    PrintDuration(t1, t3);
+    printf("\n");
 
 	free(distanceArr);
 
