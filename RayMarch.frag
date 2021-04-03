@@ -24,8 +24,8 @@ vec3 RayDir(float fov, vec2 size, vec2 pos)
 }
 
 // ray marching
-const int MaxIter = 256;
-const float StopThreshold = 0.001;
+const int MaxIter = 512;
+const float StopThreshold = 0.01;
 const float ClipFar = 1000.0;
 
 // ray marching
@@ -46,23 +46,10 @@ bool RayMarch(vec3 dir, inout float depth, out int iter)
 
 		//Divide by 4 to better handle non- smoothly decending functions
 		//Reduces rendering glitches of odd shapes
-		depth += abs(dist)/4.0;
+		depth += abs(dist)/8.0;
 	}
 
 	return false;
-}
-
-// camera rotation : pitch, yaw
-mat3 rotationXY(vec2 angle)
-{
-	vec2 c = cos(angle);
-	vec2 s = sin(angle);
-	
-	return mat3(
-		c.y      ,  0.0, -s.y,
-		s.y * s.x,  c.x,  c.y * s.x,
-		s.y * c.x, -s.x,  c.y * c.x
-	);
 }
 
 void main()
@@ -77,7 +64,7 @@ void main()
 	int iter = 0;
 	if (!RayMarch(dir, depth, iter)) 
 	{
-		fragColor = vec3(0.3*float(iter)/MaxIter);
+		fragColor = vec3(5*pow(float(iter)/MaxIter, 4.0));
 		return;
 	}
 
