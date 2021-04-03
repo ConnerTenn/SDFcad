@@ -163,3 +163,96 @@ float *MarchingCubes(unsigned int *numEntries)
 	return vertexData;
 }
 
+
+
+float *VertexData;
+unsigned int VertDataSize;
+unsigned int NumEntries;
+
+#define BUFF_STEP_SIZE (100*1000*3*3)
+
+void RecursiveMarch(vec3 xyz, float step, int recurse, int depth)
+{
+	for (int i=0; i<depth; i++)
+	{
+		std::cout << "  ";
+	}
+	std::cout << xyz.x << " " << xyz.y << " " << xyz.z << "\n";
+	float dist = SignedDistance(xyz);
+
+	if (/*abs(dist) <= step/4.0f &&*/ recurse)
+	{
+		RecursiveMarch(xyz+vec3(-step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, depth+1);
+		RecursiveMarch(xyz+vec3( step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, depth+1);
+		RecursiveMarch(xyz+vec3( step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1, depth+1);
+		RecursiveMarch(xyz+vec3(-step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, depth+1);
+
+		RecursiveMarch(xyz+vec3(-step/4.0f,+step/4.0f,-step/4.0f), step/2.0f, recurse-1, depth+1);
+		RecursiveMarch(xyz+vec3( step/4.0f,+step/4.0f,-step/4.0f), step/2.0f, recurse-1, depth+1);
+		RecursiveMarch(xyz+vec3( step/4.0f,+step/4.0f, step/4.0f), step/2.0f, recurse-1, depth+1);
+		RecursiveMarch(xyz+vec3(-step/4.0f,+step/4.0f,-step/4.0f), step/2.0f, recurse-1, depth+1);
+	}
+	else
+	{
+		TRIANGLE triangles[5];
+		GRIDCELL grid;
+		grid.p[0] = xyz+vec3(-step/2.0f,-step/2.0f,-step/2.0f);
+		grid.p[1] = xyz+vec3( step/2.0f,-step/2.0f,-step/2.0f);
+		grid.p[2] = xyz+vec3( step/2.0f,-step/2.0f, step/2.0f);
+		grid.p[3] = xyz+vec3(-step/2.0f,-step/2.0f,-step/2.0f);
+
+		grid.p[0] = xyz+vec3(-step/2.0f,+step/2.0f,-step/2.0f);
+		grid.p[1] = xyz+vec3( step/2.0f,+step/2.0f,-step/2.0f);
+		grid.p[2] = xyz+vec3( step/2.0f,+step/2.0f, step/2.0f);
+		grid.p[3] = xyz+vec3(-step/2.0f,+step/2.0f,-step/2.0f);
+
+
+		grid.val[0] = SignedDistance(grid.p[0]);
+		grid.val[1] = SignedDistance(grid.p[1]);
+		grid.val[2] = SignedDistance(grid.p[2]);
+		grid.val[3] = SignedDistance(grid.p[3]);
+
+		grid.val[4] = SignedDistance(grid.p[4]);
+		grid.val[5] = SignedDistance(grid.p[5]);
+		grid.val[6] = SignedDistance(grid.p[6]);
+		grid.val[7] = SignedDistance(grid.p[7]);
+
+		int numtri = Polygonise(grid, 0.0, triangles);
+
+		for (int i=0; i<numtri; i++)
+		{
+			VertexData[NumEntries++] = triangles[i].p[0].x;
+			VertexData[NumEntries++] = triangles[i].p[0].y;
+			VertexData[NumEntries++] = triangles[i].p[0].z;
+
+			VertexData[NumEntries++] = triangles[i].p[1].x;
+			VertexData[NumEntries++] = triangles[i].p[1].y;
+			VertexData[NumEntries++] = triangles[i].p[1].z;
+
+			VertexData[NumEntries++] = triangles[i].p[2].x;
+			VertexData[NumEntries++] = triangles[i].p[2].y;
+			VertexData[NumEntries++] = triangles[i].p[2].z;
+
+			if (NumEntries+9 >= VertDataSize)
+			{
+				std::cout << "Realloc\n";
+				VertDataSize += BUFF_STEP_SIZE;
+				VertexData = (float *)realloc(VertexData, sizeof(float)*VertDataSize);
+			}
+		}
+	}
+}
+
+
+float *MarchingCubes2(unsigned int *numEntries)
+{
+	VertDataSize = BUFF_STEP_SIZE;
+	VertexData = (float *)malloc(sizeof(float)*VertDataSize);
+	NumEntries=0;
+
+	RecursiveMarch(vec3(0.0f), 3.0f, 3, 0);
+
+	*numEntries = NumEntries;
+	return VertexData;
+}
+

@@ -122,7 +122,7 @@ int main()
 #else
 	std::cout << "Generating Marching Cubes...\n";
 	unsigned int numEntries;
-	float *vertexData = MarchingCubes(&numEntries);
+	float *vertexData = MarchingCubes2(&numEntries);
 	std::cout << "Marching Cubes generated (" << numEntries/3 << " vertices)\n";
 
 	GLuint vertexbuffer;
