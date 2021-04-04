@@ -13,45 +13,7 @@ using namespace glm;
 
 #include "Common.hpp"
 
-const float PI = 3.14159265359;
-vec3 translate(vec3 pos, vec3 move)
-{
-	return pos - move; 
-}
-float sdBox(vec3 p, vec3 b)
-{
-	vec3 d = abs(p) - b;
-	return min(max(d.x,max(d.y,d.z)),0.0f) + length(max(d,0.0f));
-}
-float sdSphere(vec3 pos, float r)
-{
-	return length(pos) - r;
-}
-float sdUnion(float d0, float d1)
-{
-	return min(d0, d1);
-}
-float sdInter(float d0, float d1)
-{
-	return max(d0, d1);
-}
-
-float SignedDistance(vec3 p)
-{
-	vec3 p1 = translate(p, vec3(0.6,0,0));
-	vec3 p2 = translate(p, vec3(-0.6,0,0));
-
-	float d0 = sdBox(p1, vec3(0.5));
-	float d1 = sdSphere(p1, 0.6);
-	float d2 = sdSphere(p2, 0.6);
-	
-	float d = sdInter(d1, d0) + 
-		sin(p1.y*2*PI*10.0f)/50.0f + 
-		sin(p1.x*2*PI*10.0f)/100.0f + 
-		sin(p1.z*2*PI*10.0f)/100.0f;
-
-	return sdUnion(d, d2);
-}
+#include "SignedDifference.hpp"
 
 
 
