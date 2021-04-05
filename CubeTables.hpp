@@ -5,16 +5,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
-#define XYZ vec3
-
 //http://paulbourke.net/geometry/polygonise/
 
 typedef struct {
-	XYZ p[3];
+	vec3 p[3];
 } TRIANGLE;
 
 typedef struct {
-	XYZ p[8];
+	vec3 p[8];
 	float val[8];
 } GRIDCELL;
 
@@ -24,10 +22,10 @@ typedef struct {
 	Linearly interpolate the position where an isosurface cuts
 	an edge between two vertices, each with their own scalar value
 */
-inline XYZ VertexInterp(float isolevel, XYZ p1, XYZ p2, float valp1, float valp2)
+inline vec3 VertexInterp(float isolevel, vec3 p1, vec3 p2, float valp1, float valp2)
 {
 	float mu;
-	XYZ p;
+	vec3 p;
 
 	if (abs(isolevel-valp1) < SMALL) { return p1; }
 	if (abs(isolevel-valp2) < SMALL) { return p2; }
@@ -58,7 +56,7 @@ int Polygonise(GRIDCELL grid, float isolevel, TRIANGLE *triangles)
 {
 	int i,ntriang;
 	int cubeindex;
-	XYZ vertlist[12];
+	vec3 vertlist[12];
 
 
 	/*
