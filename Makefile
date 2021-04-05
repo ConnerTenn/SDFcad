@@ -3,10 +3,11 @@ CC = gcc
 CXX = g++
 
 CFLAGS = -Wall -O3
-CXXFLAGS = -Wall -O3 -I/usr/include/python3.9
-LDFLAGS = -lm -lpython3.9
+CXXFLAGS = -Wall -O3 -I/usr/include/python3.9 #$(shell python3.9-config --cflags)
+LDFLAGS = -lm
 LDFLAGS += $(shell pkg-config --static --libs glfw3)
 LDFLAGS += $(shell pkg-config --static --libs glew)
+LDFLAGS += -lpython3.9 #$(shell python3.9-config --ldflags)
 
 make = $(MAKE) --no-print-directory -j8
 
@@ -14,7 +15,7 @@ all: clean
 	$(make) SDFcad
 
 %.o: %.c
-	$(C) $(CFLAGS) $^ -c -o $@
+	$(CC) $(CFLAGS) $^ -c -o $@
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $^ -c -o $@
 
