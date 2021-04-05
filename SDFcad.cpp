@@ -17,6 +17,7 @@ using namespace glm;
 
 #include "shader.hpp"
 #include "MarchingCubes.hpp"
+#include "SignedDistance.hpp"
 
 #include "Common.hpp"
 
@@ -120,6 +121,8 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
 #else
+	InitSignedDistance("SignedDistance.py");
+
 	std::cout << "Generating Marching Cubes...\n";
 	unsigned int numEntries;
 	float *vertexData = MarchingCubes2(&numEntries);
@@ -130,6 +133,8 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*numEntries, vertexData, GL_STATIC_DRAW);
 	free(vertexData);
+	
+	ShutdownSignedDistance();
 #endif
 
 	std::cout << "Entering Main Loop\n";

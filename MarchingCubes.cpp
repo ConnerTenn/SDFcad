@@ -13,7 +13,7 @@ using namespace glm;
 
 #include "Common.hpp"
 
-#include "SignedDifference.hpp"
+#include "SignedDistance.hpp"
 
 
 
