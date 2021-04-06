@@ -101,64 +101,67 @@ void RecursiveMarch2(vec3 xyz, float step, int recurse,
 	float dist = SignedDistance(xyz);
 
 	//abs(dist) <= sqrt(3)
-	if (abs(dist) <= step*1.735f && recurse)
+	if (abs(dist) <= step*1.735f)
 	{
-		RecursiveMarch2(xyz+vec3(-step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, dist1, 0,     0,     0,      0,    0,    dist, 0,        d1En,  false, false, false,  false, false, true,  false);
-		RecursiveMarch2(xyz+vec3( step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, 0,     dist2, 0,     0,      0,    0,    0,    dist,     false, d2En,  false, false,  false, false, false, true );
-		RecursiveMarch2(xyz+vec3( step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1, 0,     0,     dist3, 0,      dist, 0,    0,    0,        false, false, d3En,  false,  true,  false, false, false);
-		RecursiveMarch2(xyz+vec3(-step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1, 0,     0,     0,     dist4,  0,    dist, 0,    0,        false, false, false, d4En,   false, true,  false, false);
-
-		RecursiveMarch2(xyz+vec3(-step/4.0f, step/4.0f,-step/4.0f), step/2.0f, recurse-1, 0,    0,    dist, 0,         dist5, 0,     0,     0,     false, false, true,  false,  d5En,  false, false, false);
-		RecursiveMarch2(xyz+vec3( step/4.0f, step/4.0f,-step/4.0f), step/2.0f, recurse-1, 0,    0,    0,    dist,      0,     dist6, 0,     0,     false, false, false, true,   false, d6En,  false, false);
-		RecursiveMarch2(xyz+vec3( step/4.0f, step/4.0f, step/4.0f), step/2.0f, recurse-1, dist, 0,    0,    0,         0,     0,     dist7, 0,     true,  false, false, false,  false, false, d7En,  false);
-		RecursiveMarch2(xyz+vec3(-step/4.0f, step/4.0f, step/4.0f), step/2.0f, recurse-1, 0,    dist, 0,    0,         0,     0,     0,     dist8, false, true,  false, false,  false, false, false, d8En );
-	}
-	else
-	{
-		TRIANGLE triangles[5];
-		GRIDCELL grid;
-		grid.p[0] = xyz+vec3(-step/2.0f,-step/2.0f,-step/2.0f);
-		grid.p[1] = xyz+vec3( step/2.0f,-step/2.0f,-step/2.0f);
-		grid.p[2] = xyz+vec3( step/2.0f,-step/2.0f, step/2.0f);
-		grid.p[3] = xyz+vec3(-step/2.0f,-step/2.0f, step/2.0f);
-
-		grid.p[4] = xyz+vec3(-step/2.0f, step/2.0f,-step/2.0f);
-		grid.p[5] = xyz+vec3( step/2.0f, step/2.0f,-step/2.0f);
-		grid.p[6] = xyz+vec3( step/2.0f, step/2.0f, step/2.0f);
-		grid.p[7] = xyz+vec3(-step/2.0f, step/2.0f, step/2.0f);
-
-
-		if (d1En) { grid.val[0] = dist1; } else { grid.val[0] = SignedDistance(grid.p[0]); }
-		if (d2En) { grid.val[1] = dist2; } else { grid.val[1] = SignedDistance(grid.p[1]); }
-		if (d3En) { grid.val[2] = dist3; } else { grid.val[2] = SignedDistance(grid.p[2]); }
-		if (d4En) { grid.val[3] = dist4; } else { grid.val[3] = SignedDistance(grid.p[3]); }
-
-		if (d5En) { grid.val[4] = dist5; } else { grid.val[4] = SignedDistance(grid.p[4]); }
-		if (d6En) { grid.val[5] = dist6; } else { grid.val[5] = SignedDistance(grid.p[5]); }
-		if (d7En) { grid.val[6] = dist7; } else { grid.val[6] = SignedDistance(grid.p[6]); }
-		if (d8En) { grid.val[7] = dist8; } else { grid.val[7] = SignedDistance(grid.p[7]); }
-
-		int numtri = Polygonise(grid, 0.0, triangles);
-
-		for (int i=0; i<numtri; i++)
+		if (recurse)
 		{
-			VertexData[NumEntries++] = triangles[i].p[0].x;
-			VertexData[NumEntries++] = triangles[i].p[0].y;
-			VertexData[NumEntries++] = triangles[i].p[0].z;
+			RecursiveMarch2(xyz+vec3(-step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, dist1, 0,     0,     0,      0,    0,    dist, 0,        d1En,  false, false, false,  false, false, true,  false);
+			RecursiveMarch2(xyz+vec3( step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, 0,     dist2, 0,     0,      0,    0,    0,    dist,     false, d2En,  false, false,  false, false, false, true );
+			RecursiveMarch2(xyz+vec3( step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1, 0,     0,     dist3, 0,      dist, 0,    0,    0,        false, false, d3En,  false,  true,  false, false, false);
+			RecursiveMarch2(xyz+vec3(-step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1, 0,     0,     0,     dist4,  0,    dist, 0,    0,        false, false, false, d4En,   false, true,  false, false);
 
-			VertexData[NumEntries++] = triangles[i].p[1].x;
-			VertexData[NumEntries++] = triangles[i].p[1].y;
-			VertexData[NumEntries++] = triangles[i].p[1].z;
+			RecursiveMarch2(xyz+vec3(-step/4.0f, step/4.0f,-step/4.0f), step/2.0f, recurse-1, 0,    0,    dist, 0,         dist5, 0,     0,     0,     false, false, true,  false,  d5En,  false, false, false);
+			RecursiveMarch2(xyz+vec3( step/4.0f, step/4.0f,-step/4.0f), step/2.0f, recurse-1, 0,    0,    0,    dist,      0,     dist6, 0,     0,     false, false, false, true,   false, d6En,  false, false);
+			RecursiveMarch2(xyz+vec3( step/4.0f, step/4.0f, step/4.0f), step/2.0f, recurse-1, dist, 0,    0,    0,         0,     0,     dist7, 0,     true,  false, false, false,  false, false, d7En,  false);
+			RecursiveMarch2(xyz+vec3(-step/4.0f, step/4.0f, step/4.0f), step/2.0f, recurse-1, 0,    dist, 0,    0,         0,     0,     0,     dist8, false, true,  false, false,  false, false, false, d8En );
+		}
+		else
+		{
+			TRIANGLE triangles[5];
+			GRIDCELL grid;
+			grid.p[0] = xyz+vec3(-step/2.0f,-step/2.0f,-step/2.0f);
+			grid.p[1] = xyz+vec3( step/2.0f,-step/2.0f,-step/2.0f);
+			grid.p[2] = xyz+vec3( step/2.0f,-step/2.0f, step/2.0f);
+			grid.p[3] = xyz+vec3(-step/2.0f,-step/2.0f, step/2.0f);
 
-			VertexData[NumEntries++] = triangles[i].p[2].x;
-			VertexData[NumEntries++] = triangles[i].p[2].y;
-			VertexData[NumEntries++] = triangles[i].p[2].z;
+			grid.p[4] = xyz+vec3(-step/2.0f, step/2.0f,-step/2.0f);
+			grid.p[5] = xyz+vec3( step/2.0f, step/2.0f,-step/2.0f);
+			grid.p[6] = xyz+vec3( step/2.0f, step/2.0f, step/2.0f);
+			grid.p[7] = xyz+vec3(-step/2.0f, step/2.0f, step/2.0f);
 
-			if (NumEntries+9 >= VertDataSize)
+
+			if (d1En) { grid.val[0] = dist1; } else { grid.val[0] = SignedDistance(grid.p[0]); }
+			if (d2En) { grid.val[1] = dist2; } else { grid.val[1] = SignedDistance(grid.p[1]); }
+			if (d3En) { grid.val[2] = dist3; } else { grid.val[2] = SignedDistance(grid.p[2]); }
+			if (d4En) { grid.val[3] = dist4; } else { grid.val[3] = SignedDistance(grid.p[3]); }
+
+			if (d5En) { grid.val[4] = dist5; } else { grid.val[4] = SignedDistance(grid.p[4]); }
+			if (d6En) { grid.val[5] = dist6; } else { grid.val[5] = SignedDistance(grid.p[5]); }
+			if (d7En) { grid.val[6] = dist7; } else { grid.val[6] = SignedDistance(grid.p[6]); }
+			if (d8En) { grid.val[7] = dist8; } else { grid.val[7] = SignedDistance(grid.p[7]); }
+
+			int numtri = Polygonise(grid, 0.0, triangles);
+
+			for (int i=0; i<numtri; i++)
 			{
-				VertDataSize += BUFF_STEP_SIZE;
-				std::cout << "Realloc: " << sizeof(float)*VertDataSize/1000/1000 << "MB\n";
-				VertexData = (float *)realloc(VertexData, sizeof(float)*VertDataSize);
+				VertexData[NumEntries++] = triangles[i].p[0].x;
+				VertexData[NumEntries++] = triangles[i].p[0].y;
+				VertexData[NumEntries++] = triangles[i].p[0].z;
+
+				VertexData[NumEntries++] = triangles[i].p[1].x;
+				VertexData[NumEntries++] = triangles[i].p[1].y;
+				VertexData[NumEntries++] = triangles[i].p[1].z;
+
+				VertexData[NumEntries++] = triangles[i].p[2].x;
+				VertexData[NumEntries++] = triangles[i].p[2].y;
+				VertexData[NumEntries++] = triangles[i].p[2].z;
+
+				if (NumEntries+9 >= VertDataSize)
+				{
+					VertDataSize += BUFF_STEP_SIZE;
+					std::cout << "Realloc: " << sizeof(float)*VertDataSize/1000/1000 << "MB\n";
+					VertexData = (float *)realloc(VertexData, sizeof(float)*VertDataSize);
+				}
 			}
 		}
 	}
