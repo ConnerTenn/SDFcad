@@ -1,4 +1,8 @@
 
+/*
+https://www.linuxjournal.com/article/8497
+https://python.readthedocs.io/en/stable/extending/embedding.html#compiling
+*/
 
 #include "SignedDistance.hpp"
 
@@ -34,6 +38,10 @@ void ShutdownSignedDistance()
 
 float SignedDistance(vec3 pos)
 {
-    return -1;
+    PyObject *pyReturn = PyObject_CallFunction(PySignedDistance, "fff", pos.x, pos.y, pos.z);
+    float value = PyFloat_AsDouble(pyReturn);//PyFloat_AS_DOUBLE(pyReturn);
+    Py_DECREF(pyReturn);
+
+    return value;
 }
 
