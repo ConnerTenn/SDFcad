@@ -12,9 +12,9 @@ float SignedDistance(vec3 p)
 	float d2 = sdSphere(p2, 0.6);
 	
 	float d = sdInter(d1, d0) + 
-		sin(p1.y*2*PI*10.0f)/100.0f + 
-		sin(p1.x*2*PI*10.0f)/500.0f + 
-		sin(p1.z*2*PI*10.0f)/500.0f;
+		sin(p1.y*2*PI*10.0f)/50.0f + 
+		sin(p1.x*2*PI*10.0f)/100.0f + 
+		sin(p1.z*2*PI*10.0f)/100.0f;
 
 	return sdUnion(d, d2);
 	// return d + sfDisp( p * 2.5 );

@@ -38,9 +38,9 @@ def SignedDistance(x,y,z):
 	d2 = sdSphere(p2, 0.6)
 	
 	d = sdInter(d1, d0) + \
+		sin(p1[1]*2*pi*10.0)/50.0 + \
 		sin(p1[0]*2*pi*10.0)/100.0 + \
-		sin(p1[1]*2*pi*10.0)/500.0 + \
-		sin(p1[2]*2*pi*10.0)/500.0
+		sin(p1[2]*2*pi*10.0)/100.0
 
 	# print(d)
 	return sdUnion(d, d2)
