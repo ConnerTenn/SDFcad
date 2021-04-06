@@ -28,5 +28,5 @@ RayMarch.fragshader:
 
 .PHONY : clean
 clean :
-	rm -f SDFcad *.o
+	rm -f SDFcad RayMarch.fragshader *.o
 

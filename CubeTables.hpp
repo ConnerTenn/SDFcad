@@ -24,9 +24,10 @@ typedef struct {
 */
 inline vec3 VertexInterp(float isolevel, vec3 p1, vec3 p2, float valp1, float valp2)
 {
-	float mu;
 	vec3 p;
 
+#ifdef INTERPOLATE
+	float mu;
 	if (abs(isolevel-valp1) < SMALL) { return p1; }
 	if (abs(isolevel-valp2) < SMALL) { return p2; }
 	if (abs(valp1-valp2) < SMALL) { return p1; }
@@ -34,8 +35,9 @@ inline vec3 VertexInterp(float isolevel, vec3 p1, vec3 p2, float valp1, float va
 	//Linear interpolaton
 	mu = (isolevel - valp1) / (valp2 - valp1);
 	p = p1 + mu*(p2-p1);
-
-	// p = (p1+p2)/2.0f;
+#else
+	p = (p1+p2)/2.0f;
+#endif
 
 	return p;
 }

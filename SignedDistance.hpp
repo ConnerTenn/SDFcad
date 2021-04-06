@@ -14,3 +14,6 @@ void ShutdownSignedDistance();
 
 float SignedDistance(vec3 pos);
 
+
+
+float *MarchingCubes(unsigned int *numEntries);

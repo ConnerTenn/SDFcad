@@ -1,28 +1,24 @@
-// Include standard headers
+
+#include "Common.hpp"
+
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
 
-// Include GLEW
-#include <GL/glew.h>
-
-// Include GLFW
-#include <GLFW/glfw3.h>
-GLFWwindow* window;
-
+#include <GL/glew.h> //Include GLEW
+#include <GLFW/glfw3.h> //Include GLFW
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
 #include "shader.hpp"
-#include "MarchingCubes.hpp"
 #include "SignedDistance.hpp"
 
-#include "Common.hpp"
 
 // #define RAYMARCH
 
+GLFWwindow* window;
 
 GLfloat Zoom=3.5;
 
@@ -127,7 +123,7 @@ int main()
 
 	std::cout << "Generating Marching Cubes...\n";
 	unsigned int numEntries;
-	float *vertexData = MarchingCubes2(&numEntries);
+	float *vertexData = MarchingCubes(&numEntries);
 	std::cout << "Marching Cubes generated (" << numEntries/3 << " vertices)\n";
 
 	GLuint vertexbuffer;
