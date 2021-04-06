@@ -342,15 +342,25 @@ void RecursiveMarch3(vec3 pos, float step, int recurse,
 			grid.p[7] = pos+vec3(-step/2.0f, step/2.0f, step/2.0f);
 
 
-			grid.val[0] = SignedDistance(grid.p[0]);
-			grid.val[1] = SignedDistance(grid.p[1]);
-			grid.val[2] = SignedDistance(grid.p[2]);
-			grid.val[3] = SignedDistance(grid.p[3]);
+			int r = ipow(2, recurse);
+			// grid.val[0] = SignedDistance(grid.p[0]);
+			// grid.val[1] = SignedDistance(grid.p[1]);
+			// grid.val[2] = SignedDistance(grid.p[2]);
+			// grid.val[3] = SignedDistance(grid.p[3]);
+			if (bottom[ r][-r].Set) { grid.val[0] = bottom[ r][-r].Dist; } else { grid.val[0] = SignedDistance(grid.p[0]); bottom[ r][-r] = Distance{grid.val[0], true}; }
+			if (bottom[ r][ r].Set) { grid.val[1] = bottom[ r][ r].Dist; } else { grid.val[1] = SignedDistance(grid.p[1]); bottom[ r][ r] = Distance{grid.val[1], true}; }
+			if (bottom[-r][ r].Set) { grid.val[2] = bottom[-r][ r].Dist; } else { grid.val[2] = SignedDistance(grid.p[2]); bottom[-r][ r] = Distance{grid.val[2], true}; }
+			if (bottom[-r][-r].Set) { grid.val[3] = bottom[-r][-r].Dist; } else { grid.val[3] = SignedDistance(grid.p[3]); bottom[-r][-r] = Distance{grid.val[3], true}; }
 
-			grid.val[4] = SignedDistance(grid.p[4]);
-			grid.val[5] = SignedDistance(grid.p[5]);
-			grid.val[6] = SignedDistance(grid.p[6]);
-			grid.val[7] = SignedDistance(grid.p[7]);
+			// grid.val[4] = SignedDistance(grid.p[4]);
+			// grid.val[5] = SignedDistance(grid.p[5]);
+			// grid.val[6] = SignedDistance(grid.p[6]);
+			// grid.val[7] = SignedDistance(grid.p[7]);
+			if (top[ r][-r].Set) { grid.val[4] = top[ r][-r].Dist; } else { grid.val[4] = SignedDistance(grid.p[4]); top[ r][-r] = Distance{grid.val[4], true}; }
+			if (top[ r][ r].Set) { grid.val[5] = top[ r][ r].Dist; } else { grid.val[5] = SignedDistance(grid.p[5]); top[ r][ r] = Distance{grid.val[5], true}; }
+			if (top[-r][ r].Set) { grid.val[6] = top[-r][ r].Dist; } else { grid.val[6] = SignedDistance(grid.p[6]); top[-r][ r] = Distance{grid.val[6], true}; }
+			if (top[-r][-r].Set) { grid.val[7] = top[-r][-r].Dist; } else { grid.val[7] = SignedDistance(grid.p[7]); top[-r][-r] = Distance{grid.val[7], true}; }
+
 
 			int numtri = Polygonise(grid, 0.0, triangles);
 
