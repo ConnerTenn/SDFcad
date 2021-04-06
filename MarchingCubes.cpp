@@ -164,17 +164,25 @@ void RecursiveMarch2(vec3 xyz, float step, int recurse,
 	}
 }
 
+#include <string.h>
+
+typedef struct
+{
+	float Dist;
+	bool Set;
+} Distance;
+
 class Array1D
 {
 public:
-	float *Data;
+	Distance *Data;
 	int XOff;
-	Array1D(float *data, int xoff) :
+	Array1D(Distance *data, int xoff) :
 		Data(data), XOff(xoff)
 	{
 	}
 
-	float &operator[](int x)
+	Distance &operator[](int x)
 	{
 		return Data[x+XOff];
 	}
@@ -183,7 +191,7 @@ public:
 class Array2D
 {
 private:
-	float *Data;
+	Distance *Data;
 	int Size;
 	int XOff;
 	bool IsSlice=false;
@@ -196,7 +204,8 @@ public:
 	Array2D(int size) :
 		Size(size), XOff(size/2)
 	{
-		Data = new float [Size*Size];
+		Data = new Distance[Size*Size];
+		memset(Data, 0, sizeof(Distance) * Size*Size);
 	}
 
 	~Array2D()
@@ -276,23 +285,28 @@ n
 
 
 */
-void RecursiveMarch3(vec3 pos, float step, int recurse)
+void RecursiveMarch3(vec3 pos, float step, int recurse,
+	Array2D top, Array2D bottom, Array2D left, Array2D right, Array2D front, Array2D back)
 {
+	int sidelen = ipow(2, recurse)+1;
+	Array2D xy = Array2D(sidelen);
+	Array2D xz = Array2D(sidelen);
+	Array2D yz = Array2D(sidelen);
 
 	float dist = SignedDistance(pos);
 
 	//abs(dist) <= sqrt(3)
 	if (abs(dist) <= step*1.735f && recurse)
 	{
-		RecursiveMarch3(pos+vec3(-step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1);
-		RecursiveMarch3(pos+vec3( step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1);
-		RecursiveMarch3(pos+vec3( step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1);
-		RecursiveMarch3(pos+vec3(-step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1);
+		RecursiveMarch3(pos+vec3(-step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, xz.TopLeft(),     bottom.TopLeft(),     left.BottomLeft(),  yz.BottomLeft(),     xy.BottomLeft(),     back.BottomLeft() );
+		RecursiveMarch3(pos+vec3( step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, xz.TopRight(),    bottom.TopRight(),    yz.BottomLeft(),    right.BottomLeft(),  xy.BottomRight(),    back.BottomRight());
+		RecursiveMarch3(pos+vec3( step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1, xz.BottomRight(), bottom.BottomRight(), yz.BottomRight(),   right.BottomRight(), front.BottomRight(), xy.BottomRight()  );
+		RecursiveMarch3(pos+vec3(-step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1, xz.BottomLeft(),  bottom.BottomLeft(),  left.BottomRight(), yz.BottomRight(),    front.BottomLeft(),  xy.BottomLeft()   );
 
-		RecursiveMarch3(pos+vec3(-step/4.0f, step/4.0f,-step/4.0f), step/2.0f, recurse-1);
-		RecursiveMarch3(pos+vec3( step/4.0f, step/4.0f,-step/4.0f), step/2.0f, recurse-1);
-		RecursiveMarch3(pos+vec3( step/4.0f, step/4.0f, step/4.0f), step/2.0f, recurse-1);
-		RecursiveMarch3(pos+vec3(-step/4.0f, step/4.0f, step/4.0f), step/2.0f, recurse-1);
+		RecursiveMarch3(pos+vec3(-step/4.0f, step/4.0f,-step/4.0f), step/2.0f, recurse-1, top.TopLeft(),     xz.TopLeft(),     left.TopLeft(),  yz.TopLeft(),     xy.TopLeft(),     back.TopLeft() );
+		RecursiveMarch3(pos+vec3( step/4.0f, step/4.0f,-step/4.0f), step/2.0f, recurse-1, top.TopRight(),    xz.TopRight(),    yz.TopLeft(),    right.TopLeft(),  xy.TopRight(),    back.TopRight());
+		RecursiveMarch3(pos+vec3( step/4.0f, step/4.0f, step/4.0f), step/2.0f, recurse-1, top.BottomRight(), xz.BottomRight(), yz.TopRight(),   right.TopRight(), front.TopRight(), xy.TopRight()  );
+		RecursiveMarch3(pos+vec3(-step/4.0f, step/4.0f, step/4.0f), step/2.0f, recurse-1, top.BottomLeft(),  xz.BottomLeft(),  left.TopRight(), yz.TopRight(),    front.TopLeft(),  xy.TopLeft()   );
 	}
 	else
 	{
@@ -355,7 +369,9 @@ float *MarchingCubes(unsigned int *numEntries)
 	struct timespec t1 = GetTime();
 	// RecursiveMarch(vec3(0.0f), 10.0f, 10);
 	// RecursiveMarch2(vec3(0.0f), 10.0f, 5, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
-	RecursiveMarch3(vec3(0.0f), 10.0f, 5);
+	int recurse = 5;
+	int sidelen = ipow(2, recurse)+1;
+	RecursiveMarch3(vec3(0.0f), 10.0f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));
 	struct timespec t2 = GetTime();
 
     printf("Marching Cubes Calculation Time: ");
