@@ -347,19 +347,19 @@ void RecursiveMarch3(vec3 pos, float step, int recurse,
 			// grid.val[1] = SignedDistance(grid.p[1]);
 			// grid.val[2] = SignedDistance(grid.p[2]);
 			// grid.val[3] = SignedDistance(grid.p[3]);
-			if (bottom[ r][-r].Set) { grid.val[0] = bottom[ r][-r].Dist; } else { grid.val[0] = SignedDistance(grid.p[0]); bottom[ r][-r] = Distance{grid.val[0], true}; }
-			if (bottom[ r][ r].Set) { grid.val[1] = bottom[ r][ r].Dist; } else { grid.val[1] = SignedDistance(grid.p[1]); bottom[ r][ r] = Distance{grid.val[1], true}; }
-			if (bottom[-r][ r].Set) { grid.val[2] = bottom[-r][ r].Dist; } else { grid.val[2] = SignedDistance(grid.p[2]); bottom[-r][ r] = Distance{grid.val[2], true}; }
-			if (bottom[-r][-r].Set) { grid.val[3] = bottom[-r][-r].Dist; } else { grid.val[3] = SignedDistance(grid.p[3]); bottom[-r][-r] = Distance{grid.val[3], true}; }
+			if (bottom[ r][-r].Set) { grid.val[0] = bottom[ r][-r].Dist; } else { grid.val[0] = SignedDistance(grid.p[0]); bottom[ r][-r] = Distance{grid.val[0], true}; left [-r][-r] = Distance{grid.val[0], true}; back [-r][-r] = Distance{grid.val[0], true}; }
+			if (bottom[ r][ r].Set) { grid.val[1] = bottom[ r][ r].Dist; } else { grid.val[1] = SignedDistance(grid.p[1]); bottom[ r][ r] = Distance{grid.val[1], true}; right[-r][-r] = Distance{grid.val[0], true}; back [-r][ r] = Distance{grid.val[0], true}; }
+			if (bottom[-r][ r].Set) { grid.val[2] = bottom[-r][ r].Dist; } else { grid.val[2] = SignedDistance(grid.p[2]); bottom[-r][ r] = Distance{grid.val[2], true}; right[-r][-r] = Distance{grid.val[0], true}; front[-r][ r] = Distance{grid.val[0], true}; }
+			if (bottom[-r][-r].Set) { grid.val[3] = bottom[-r][-r].Dist; } else { grid.val[3] = SignedDistance(grid.p[3]); bottom[-r][-r] = Distance{grid.val[3], true}; left [-r][-r] = Distance{grid.val[0], true}; front[-r][-r] = Distance{grid.val[0], true}; }
 
 			// grid.val[4] = SignedDistance(grid.p[4]);
 			// grid.val[5] = SignedDistance(grid.p[5]);
 			// grid.val[6] = SignedDistance(grid.p[6]);
 			// grid.val[7] = SignedDistance(grid.p[7]);
-			if (top[ r][-r].Set) { grid.val[4] = top[ r][-r].Dist; } else { grid.val[4] = SignedDistance(grid.p[4]); top[ r][-r] = Distance{grid.val[4], true}; }
-			if (top[ r][ r].Set) { grid.val[5] = top[ r][ r].Dist; } else { grid.val[5] = SignedDistance(grid.p[5]); top[ r][ r] = Distance{grid.val[5], true}; }
-			if (top[-r][ r].Set) { grid.val[6] = top[-r][ r].Dist; } else { grid.val[6] = SignedDistance(grid.p[6]); top[-r][ r] = Distance{grid.val[6], true}; }
-			if (top[-r][-r].Set) { grid.val[7] = top[-r][-r].Dist; } else { grid.val[7] = SignedDistance(grid.p[7]); top[-r][-r] = Distance{grid.val[7], true}; }
+			if (top[ r][-r].Set) { grid.val[4] = top[ r][-r].Dist; } else { grid.val[4] = SignedDistance(grid.p[4]); top[ r][-r] = Distance{grid.val[4], true}; left [ r][-r] = Distance{grid.val[0], true}; back [ r][-r] = Distance{grid.val[0], true}; }
+			if (top[ r][ r].Set) { grid.val[5] = top[ r][ r].Dist; } else { grid.val[5] = SignedDistance(grid.p[5]); top[ r][ r] = Distance{grid.val[5], true}; right[ r][-r] = Distance{grid.val[0], true}; back [ r][ r] = Distance{grid.val[0], true}; }
+			if (top[-r][ r].Set) { grid.val[6] = top[-r][ r].Dist; } else { grid.val[6] = SignedDistance(grid.p[6]); top[-r][ r] = Distance{grid.val[6], true}; right[ r][ r] = Distance{grid.val[0], true}; front[ r][ r] = Distance{grid.val[0], true}; }
+			if (top[-r][-r].Set) { grid.val[7] = top[-r][-r].Dist; } else { grid.val[7] = SignedDistance(grid.p[7]); top[-r][-r] = Distance{grid.val[7], true}; left [ r][ r] = Distance{grid.val[0], true}; front[ r][-r] = Distance{grid.val[0], true}; }
 
 
 			int numtri = Polygonise(grid, 0.0, triangles);
