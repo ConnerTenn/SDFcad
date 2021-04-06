@@ -194,7 +194,9 @@ public:
 class Array2D
 {
 private:
+public:
 	Distance *Data;
+	int Stride;
 	int Size;
 	int XOff;
 	bool IsSlice=false;
@@ -205,10 +207,13 @@ private:
 
 public:
 	Array2D(int size) :
-		Size(size), XOff(size/2)
+		Stride(size), Size(size), XOff(size/2)
 	{
 		Data = new Distance[Size*Size];
-		memset(Data, 0, sizeof(Distance) * Size*Size);
+		for (int i=0; i<size*size; i++)
+		{
+			Data[i] = Distance{0,false};
+		}
 	}
 
 	~Array2D()
@@ -222,42 +227,49 @@ public:
 public:
 	Array1D operator[](int y)
 	{
-		return Array1D(&Data[(y+Size/2)*Size], XOff);
+		return Array1D(&Data[(y+Size/2)*Stride], XOff);
 	}
 
+	//Problem with the calculations
+	//Size never gets changed which means that the calculation becomes off
+	//Might need another variable 'stride'
 	Array2D TopLeft()
 	{
 		Array2D arr = Array2D();
-		arr.Data = Data-(Size/4)*Size;
+		arr.Data = Data+(Size/2)*Stride;
+		arr.Stride = Stride;
+		arr.Size = Size/2+1;
 		arr.XOff = XOff-Size/4;
-		arr.Size = Size;
 		arr.IsSlice = true;
 		return arr;
 	}
 	Array2D TopRight()
 	{
 		Array2D arr = Array2D();
-		arr.Data = Data-(Size/4)*Size;
+		arr.Data = Data+(Size/2)*Stride;
+		arr.Stride = Stride;
+		arr.Size = Size/2+1;
 		arr.XOff = XOff+Size/4;
-		arr.Size = Size;
 		arr.IsSlice = true;
 		return arr;
 	}
 	Array2D BottomLeft()
 	{
 		Array2D arr = Array2D();
-		arr.Data = Data+(Size/4)*Size;
+		arr.Data = Data;//-(Size/4)*Stride;
+		arr.Stride = Stride;
+		arr.Size = Size/2+1;
 		arr.XOff = XOff-Size/4;
-		arr.Size = Size;
 		arr.IsSlice = true;
 		return arr;
 	}
 	Array2D BottomRight()
 	{
 		Array2D arr = Array2D();
-		arr.Data = Data+(Size/4)*Size;
+		arr.Data = Data;//-(Size/4)*Stride;
+		arr.Stride = Stride;
+		arr.Size = Size/2+1;
 		arr.XOff = XOff+Size/4;
-		arr.Size = Size;
 		arr.IsSlice = true;
 		return arr;
 	}
@@ -291,12 +303,14 @@ n
 void RecursiveMarch3(vec3 pos, float step, int recurse,
 	Array2D top, Array2D bottom, Array2D left, Array2D right, Array2D front, Array2D back)
 {
-	int sidelen = ipow(2, recurse)+1;
+	int sidelen = ipow(2, recurse+1)+1;
+	// printf("sidelen:%d\n", sidelen);
 	Array2D xy = Array2D(sidelen);
 	Array2D xz = Array2D(sidelen);
 	Array2D yz = Array2D(sidelen);
 
 	float dist = SignedDistance(pos);
+	xy[0][0] = Distance{dist, true};
 
 	//abs(dist) <= sqrt(3)
 	if (abs(dist) <= step*1.735f && recurse)
@@ -373,7 +387,7 @@ float *MarchingCubes(unsigned int *numEntries)
 	// RecursiveMarch(vec3(0.0f), 10.0f, 10);
 	// RecursiveMarch2(vec3(0.0f), 10.0f, 5, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
 	int recurse = 5;
-	int sidelen = ipow(2, recurse)+1;
+	int sidelen = ipow(2, recurse+1)+1;
 	RecursiveMarch3(vec3(0.0f), 10.0f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));
 	struct timespec t2 = GetTime();
 
