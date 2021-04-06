@@ -101,7 +101,7 @@ void RecursiveMarch2(vec3 xyz, float step, int recurse,
 	float dist = SignedDistance(xyz);
 
 	//abs(dist) <= sqrt(3)
-	if (abs(dist) <= step*1.735f)
+	if (abs(dist) <= step*2.0f)//*1.735f)
 	{
 		if (recurse)
 		{
@@ -313,7 +313,7 @@ void RecursiveMarch3(vec3 pos, float step, int recurse,
 	xy[0][0] = Distance{dist, true};
 
 	//abs(dist) <= sqrt(3)
-	if (abs(dist) <= step*1.735f)
+	if (abs(dist) <= step*2.0f)//*1.735f)
 	{
 		if (recurse)
 		{
