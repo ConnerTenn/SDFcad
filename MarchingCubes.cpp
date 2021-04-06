@@ -313,64 +313,67 @@ void RecursiveMarch3(vec3 pos, float step, int recurse,
 	xy[0][0] = Distance{dist, true};
 
 	//abs(dist) <= sqrt(3)
-	if (abs(dist) <= step*1.735f && recurse)
+	if (abs(dist) <= step*1.735f)
 	{
-		RecursiveMarch3(pos+vec3(-step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, xz.TopLeft(),     bottom.TopLeft(),     left.BottomLeft(),  yz.BottomLeft(),     xy.BottomLeft(),     back.BottomLeft() );
-		RecursiveMarch3(pos+vec3( step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, xz.TopRight(),    bottom.TopRight(),    yz.BottomLeft(),    right.BottomLeft(),  xy.BottomRight(),    back.BottomRight());
-		RecursiveMarch3(pos+vec3( step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1, xz.BottomRight(), bottom.BottomRight(), yz.BottomRight(),   right.BottomRight(), front.BottomRight(), xy.BottomRight()  );
-		RecursiveMarch3(pos+vec3(-step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1, xz.BottomLeft(),  bottom.BottomLeft(),  left.BottomRight(), yz.BottomRight(),    front.BottomLeft(),  xy.BottomLeft()   );
-
-		RecursiveMarch3(pos+vec3(-step/4.0f, step/4.0f,-step/4.0f), step/2.0f, recurse-1, top.TopLeft(),     xz.TopLeft(),     left.TopLeft(),  yz.TopLeft(),     xy.TopLeft(),     back.TopLeft() );
-		RecursiveMarch3(pos+vec3( step/4.0f, step/4.0f,-step/4.0f), step/2.0f, recurse-1, top.TopRight(),    xz.TopRight(),    yz.TopLeft(),    right.TopLeft(),  xy.TopRight(),    back.TopRight());
-		RecursiveMarch3(pos+vec3( step/4.0f, step/4.0f, step/4.0f), step/2.0f, recurse-1, top.BottomRight(), xz.BottomRight(), yz.TopRight(),   right.TopRight(), front.TopRight(), xy.TopRight()  );
-		RecursiveMarch3(pos+vec3(-step/4.0f, step/4.0f, step/4.0f), step/2.0f, recurse-1, top.BottomLeft(),  xz.BottomLeft(),  left.TopRight(), yz.TopRight(),    front.TopLeft(),  xy.TopLeft()   );
-	}
-	else
-	{
-		TRIANGLE triangles[5];
-		GRIDCELL grid;
-		grid.p[0] = pos+vec3(-step/2.0f,-step/2.0f,-step/2.0f);
-		grid.p[1] = pos+vec3( step/2.0f,-step/2.0f,-step/2.0f);
-		grid.p[2] = pos+vec3( step/2.0f,-step/2.0f, step/2.0f);
-		grid.p[3] = pos+vec3(-step/2.0f,-step/2.0f, step/2.0f);
-
-		grid.p[4] = pos+vec3(-step/2.0f, step/2.0f,-step/2.0f);
-		grid.p[5] = pos+vec3( step/2.0f, step/2.0f,-step/2.0f);
-		grid.p[6] = pos+vec3( step/2.0f, step/2.0f, step/2.0f);
-		grid.p[7] = pos+vec3(-step/2.0f, step/2.0f, step/2.0f);
-
-
-		grid.val[0] = SignedDistance(grid.p[0]);
-		grid.val[1] = SignedDistance(grid.p[1]);
-		grid.val[2] = SignedDistance(grid.p[2]);
-		grid.val[3] = SignedDistance(grid.p[3]);
-
-		grid.val[4] = SignedDistance(grid.p[4]);
-		grid.val[5] = SignedDistance(grid.p[5]);
-		grid.val[6] = SignedDistance(grid.p[6]);
-		grid.val[7] = SignedDistance(grid.p[7]);
-
-		int numtri = Polygonise(grid, 0.0, triangles);
-
-		for (int i=0; i<numtri; i++)
+		if (recurse)
 		{
-			VertexData[NumEntries++] = triangles[i].p[0].x;
-			VertexData[NumEntries++] = triangles[i].p[0].y;
-			VertexData[NumEntries++] = triangles[i].p[0].z;
+			RecursiveMarch3(pos+vec3(-step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, xz.TopLeft(),     bottom.TopLeft(),     left.BottomLeft(),  yz.BottomLeft(),     xy.BottomLeft(),     back.BottomLeft() );
+			RecursiveMarch3(pos+vec3( step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, xz.TopRight(),    bottom.TopRight(),    yz.BottomLeft(),    right.BottomLeft(),  xy.BottomRight(),    back.BottomRight());
+			RecursiveMarch3(pos+vec3( step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1, xz.BottomRight(), bottom.BottomRight(), yz.BottomRight(),   right.BottomRight(), front.BottomRight(), xy.BottomRight()  );
+			RecursiveMarch3(pos+vec3(-step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1, xz.BottomLeft(),  bottom.BottomLeft(),  left.BottomRight(), yz.BottomRight(),    front.BottomLeft(),  xy.BottomLeft()   );
 
-			VertexData[NumEntries++] = triangles[i].p[1].x;
-			VertexData[NumEntries++] = triangles[i].p[1].y;
-			VertexData[NumEntries++] = triangles[i].p[1].z;
+			RecursiveMarch3(pos+vec3(-step/4.0f, step/4.0f,-step/4.0f), step/2.0f, recurse-1, top.TopLeft(),     xz.TopLeft(),     left.TopLeft(),  yz.TopLeft(),     xy.TopLeft(),     back.TopLeft() );
+			RecursiveMarch3(pos+vec3( step/4.0f, step/4.0f,-step/4.0f), step/2.0f, recurse-1, top.TopRight(),    xz.TopRight(),    yz.TopLeft(),    right.TopLeft(),  xy.TopRight(),    back.TopRight());
+			RecursiveMarch3(pos+vec3( step/4.0f, step/4.0f, step/4.0f), step/2.0f, recurse-1, top.BottomRight(), xz.BottomRight(), yz.TopRight(),   right.TopRight(), front.TopRight(), xy.TopRight()  );
+			RecursiveMarch3(pos+vec3(-step/4.0f, step/4.0f, step/4.0f), step/2.0f, recurse-1, top.BottomLeft(),  xz.BottomLeft(),  left.TopRight(), yz.TopRight(),    front.TopLeft(),  xy.TopLeft()   );
+		}
+		else
+		{
+			TRIANGLE triangles[5];
+			GRIDCELL grid;
+			grid.p[0] = pos+vec3(-step/2.0f,-step/2.0f,-step/2.0f);
+			grid.p[1] = pos+vec3( step/2.0f,-step/2.0f,-step/2.0f);
+			grid.p[2] = pos+vec3( step/2.0f,-step/2.0f, step/2.0f);
+			grid.p[3] = pos+vec3(-step/2.0f,-step/2.0f, step/2.0f);
 
-			VertexData[NumEntries++] = triangles[i].p[2].x;
-			VertexData[NumEntries++] = triangles[i].p[2].y;
-			VertexData[NumEntries++] = triangles[i].p[2].z;
+			grid.p[4] = pos+vec3(-step/2.0f, step/2.0f,-step/2.0f);
+			grid.p[5] = pos+vec3( step/2.0f, step/2.0f,-step/2.0f);
+			grid.p[6] = pos+vec3( step/2.0f, step/2.0f, step/2.0f);
+			grid.p[7] = pos+vec3(-step/2.0f, step/2.0f, step/2.0f);
 
-			if (NumEntries+9 >= VertDataSize)
+
+			grid.val[0] = SignedDistance(grid.p[0]);
+			grid.val[1] = SignedDistance(grid.p[1]);
+			grid.val[2] = SignedDistance(grid.p[2]);
+			grid.val[3] = SignedDistance(grid.p[3]);
+
+			grid.val[4] = SignedDistance(grid.p[4]);
+			grid.val[5] = SignedDistance(grid.p[5]);
+			grid.val[6] = SignedDistance(grid.p[6]);
+			grid.val[7] = SignedDistance(grid.p[7]);
+
+			int numtri = Polygonise(grid, 0.0, triangles);
+
+			for (int i=0; i<numtri; i++)
 			{
-				VertDataSize += BUFF_STEP_SIZE;
-				std::cout << "Realloc: " << sizeof(float)*VertDataSize/1000/1000 << "MB\n";
-				VertexData = (float *)realloc(VertexData, sizeof(float)*VertDataSize);
+				VertexData[NumEntries++] = triangles[i].p[0].x;
+				VertexData[NumEntries++] = triangles[i].p[0].y;
+				VertexData[NumEntries++] = triangles[i].p[0].z;
+
+				VertexData[NumEntries++] = triangles[i].p[1].x;
+				VertexData[NumEntries++] = triangles[i].p[1].y;
+				VertexData[NumEntries++] = triangles[i].p[1].z;
+
+				VertexData[NumEntries++] = triangles[i].p[2].x;
+				VertexData[NumEntries++] = triangles[i].p[2].y;
+				VertexData[NumEntries++] = triangles[i].p[2].z;
+
+				if (NumEntries+9 >= VertDataSize)
+				{
+					VertDataSize += BUFF_STEP_SIZE;
+					std::cout << "Realloc: " << sizeof(float)*VertDataSize/1000/1000 << "MB\n";
+					VertexData = (float *)realloc(VertexData, sizeof(float)*VertDataSize);
+				}
 			}
 		}
 	}
