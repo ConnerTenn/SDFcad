@@ -164,6 +164,118 @@ void RecursiveMarch2(vec3 xyz, float step, int recurse,
 	}
 }
 
+class Array1D
+{
+public:
+	float *Data;
+	int XOff;
+	Array1D(float *data, int xoff) :
+		Data(data), XOff(xoff)
+	{
+	}
+
+	float &operator[](int x)
+	{
+		return Data[x+XOff];
+	}
+};
+
+class Array2D
+{
+private:
+	float *Data;
+	int Size;
+	int XOff;
+	bool IsSlice=false;
+
+	Array2D()
+	{
+	}
+
+public:
+	Array2D(int size) :
+		Size(size), XOff(size/2)
+	{
+		Data = new float [Size*Size];
+	}
+
+	~Array2D()
+	{
+		if (!IsSlice)
+		{
+			delete[] Data;
+		}
+	}
+
+public:
+	Array1D operator[](int y)
+	{
+		return Array1D(&Data[(y+Size/2)*Size], XOff);
+	}
+
+	Array2D TopLeft()
+	{
+		Array2D arr = Array2D();
+		arr.Data = Data-(Size/4)*Size;
+		arr.XOff = XOff-Size/4;
+		arr.Size = Size;
+		arr.IsSlice = true;
+		return arr;
+	}
+	Array2D TopRight()
+	{
+		Array2D arr = Array2D();
+		arr.Data = Data-(Size/4)*Size;
+		arr.XOff = XOff+Size/4;
+		arr.Size = Size;
+		arr.IsSlice = true;
+		return arr;
+	}
+	Array2D BottomLeft()
+	{
+		Array2D arr = Array2D();
+		arr.Data = Data+(Size/4)*Size;
+		arr.XOff = XOff-Size/4;
+		arr.Size = Size;
+		arr.IsSlice = true;
+		return arr;
+	}
+	Array2D BottomRight()
+	{
+		Array2D arr = Array2D();
+		arr.Data = Data+(Size/4)*Size;
+		arr.XOff = XOff+Size/4;
+		arr.Size = Size;
+		arr.IsSlice = true;
+		return arr;
+	}
+};
+
+/*
+x     y      z
+back  bottom left
+back  bottom right
+front bottom right
+front bottom left
+
+back  top    left
+back  top    right
+front top    right
+front top    left
+
+n
+0 |                               -                               |
+1 |               -               |               -               |
+2 |       -       |       -       |       -       |       -       |
+3 |   -   |   -   |   -   |   -   |   -   |   -   |   -   |   -   |
+4 | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+5 |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+
+#dashes   = 2**n
+#dividers = 2**n + 1
+
+
+*/
 void RecursiveMarch3(vec3 pos, float step, int recurse)
 {
 
