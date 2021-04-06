@@ -121,7 +121,9 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
 #else
+	#ifdef PYTHON
 	InitSignedDistance("SignedDistance.py");
+	#endif
 
 	std::cout << "Generating Marching Cubes...\n";
 	unsigned int numEntries;
@@ -134,7 +136,9 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*numEntries, vertexData, GL_STATIC_DRAW);
 	free(vertexData);
 	
+	#ifdef PYTHON
 	ShutdownSignedDistance();
+	#endif
 #endif
 
 	std::cout << "Entering Main Loop\n";

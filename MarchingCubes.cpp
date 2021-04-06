@@ -285,7 +285,7 @@ float *MarchingCubes2(unsigned int *numEntries)
 
 	struct timespec t1 = GetTime();
 	// RecursiveMarch(vec3(0.0f), 10.0f, 10);
-	RecursiveMarch2(vec3(0.0f), 10.0f, 6, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
+	RecursiveMarch2(vec3(0.0f), 10.0f, 7, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
 	struct timespec t2 = GetTime();
 
     printf("Marching Cubes Calculation Time: ");
