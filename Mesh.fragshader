@@ -9,18 +9,32 @@ uniform vec3 LookDir;
 
 out vec3 fragColor;
 
-vec3 shading() 
+
+vec3 Fresnel(vec3 F0, vec3 h, vec3 l)
+{
+	return F0 + (1.0-F0) * pow(clamp(1.0-dot(h,l), 0.0, 1.0), 1.3);
+}
+
+vec3 Shading() 
 {	
 	vec3 final = vec3( 0.0 );
 	
+	// vec3 refl = reflect(LookDir, norm);
+	
+	float shininess = 16.0;
+    vec3 Ks = vec3( 0.5 );
+    vec3 Kd = vec3( 1.0 );
+
 	// light 0
 	{
-		// vec3 light_pos   = vec3(1.0, 1.0, 1.0);
-		vec3 light_color = vec3(1.0, 0.7, 0.3);
+		vec3 lightColor = vec3(0.2784, 0.902, 1.0);//vec3(1.0, 0.7, 0.3);
 	
-		vec3 diffuse  = vec3(max(0.0, dot(LookDir, norm)));
+		vec3 diffuse  = Kd * vec3(max(0.0, dot(LookDir, norm)));
+		vec3 specular = vec3(max(0.0, dot(LookDir, norm)));
+        vec3 F = Fresnel(Ks, LookDir, norm);
+		specular = pow(specular, vec3(shininess));
 		
-		final += light_color * diffuse; 
+		final += lightColor * (mix(diffuse, specular, F) + 0.2*F); 
 	}
 	
 	return final;
@@ -28,5 +42,5 @@ vec3 shading()
 
 void main()
 {
-	fragColor = shading() * gl_FragCoord.w;
+	fragColor = Shading() * pow(gl_FragCoord.w, 0.5);
 }
