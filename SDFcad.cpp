@@ -174,34 +174,71 @@ int main()
 	do
 	{
 		static GLfloat pitch=0, yaw=0;
+		static vec3 pos;
 
 		{
-			static bool last = 0;
-			static double startx, starty;
-			static GLfloat startpitch=0, startyaw=0;
 
-			int press = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE);
-			if (press == GLFW_RELEASE && last)
+			int mousepress = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE);
+			int shiftpress = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT);
+			if (shiftpress)
 			{
-				last = 0;
-			}
-			else if (press == GLFW_PRESS)
-			{
-				double x, y;
-				glfwGetCursorPos(window, &x, &y);
+				static bool hold = 0;
+				static double startx, starty;
+				static vec3 startpos;
 
-				if (!last)
+				glm::mat4 looktmp = (glm::rotate(glm::mat4(1), yaw, glm::vec3(0, 1, 0))*glm::rotate(glm::mat4(1), pitch, glm::vec3(1, 0, 0)));
+
+				if (mousepress == GLFW_RELEASE && hold)
 				{
-					startx = x;
-					starty = y;
-					startpitch = pitch;
-					startyaw = yaw;
-					last=1;
+					hold = 0;
 				}
-				else
+				else if (mousepress == GLFW_PRESS)
 				{
-					pitch = startpitch + (2*3.1415)*(starty-y)/768;
-					yaw = startyaw + (2*3.1415)*(startx-x)/1024;
+					double x, y;
+					glfwGetCursorPos(window, &x, &y);
+
+					if (!hold)
+					{
+						startx = x;
+						starty = y;
+						startpos = pos;
+						hold=1;
+					}
+					else
+					{
+						vec4 newpos = looktmp*vec4(-(startx-x)/1024, (starty-y)/768, 0, 1);
+						pos = startpos+vec3(newpos.x, newpos.y, newpos.z)*Zoom;
+					}
+				}
+			}
+			else
+			{
+				static bool hold = 0;
+				static double startx, starty;
+				static GLfloat startpitch=0, startyaw=0;
+
+				if (mousepress == GLFW_RELEASE && hold)
+				{
+					hold = 0;
+				}
+				else if (mousepress == GLFW_PRESS)
+				{
+					double x, y;
+					glfwGetCursorPos(window, &x, &y);
+
+					if (!hold)
+					{
+						startx = x;
+						starty = y;
+						startpitch = pitch;
+						startyaw = yaw;
+						hold=1;
+					}
+					else
+					{
+						pitch = startpitch + (2*3.1415)*(starty-y)/768;
+						yaw = startyaw + (2*3.1415)*(startx-x)/1024;
+					}
 				}
 			}
 		}
@@ -243,9 +280,10 @@ int main()
 			glm::translate(glm::mat4(1), glm::vec3(0, 0, -Zoom)) *
 			glm::rotate(glm::mat4(1), -pitch, glm::vec3(1, 0, 0)) *
 			glm::rotate(glm::mat4(1), -yaw, glm::vec3(0, 1, 0)) *
+			glm::translate(glm::mat4(1), pos) *
 			viewMat;
 
-		glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+		glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.001f, 100.0f);
 		glm::mat4 mvp        = Projection * viewMat; // Remember, matrix multiplication is the other way around
 		glUniformMatrix4fv(MvpID, 1, false, &mvp[0][0]);
 
