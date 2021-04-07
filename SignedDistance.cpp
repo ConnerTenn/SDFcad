@@ -1,8 +1,4 @@
 
-/*
-https://www.linuxjournal.com/article/8497
-https://python.readthedocs.io/en/stable/extending/embedding.html#compiling
-*/
 
 
 #include "SignedDistance.hpp"
@@ -10,6 +6,13 @@ https://python.readthedocs.io/en/stable/extending/embedding.html#compiling
 #include <stdio.h>
 
 #ifdef PYTHON
+
+/*
+https://www.linuxjournal.com/article/8497
+https://python.readthedocs.io/en/stable/extending/embedding.html#compiling
+
+//https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html
+*/
 
 #include <Python.h>
 #include <dlfcn.h>
