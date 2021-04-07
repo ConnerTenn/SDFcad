@@ -3,10 +3,11 @@
 in vec4 gl_FragCoord;
 
 in vec3 color;
+in vec3 norm;
 
 out vec3 fragColor;
 
 void main()
 {
-	fragColor = color * gl_FragCoord.w;
+	fragColor = norm * gl_FragCoord.w;
 }

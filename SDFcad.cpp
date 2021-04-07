@@ -126,11 +126,42 @@ int main()
 	float *vertexData = MarchingCubes(&numEntries);
 	std::cout << "Marching Cubes generated (" << numEntries/3 << " vertices)\n";
 
+	float *normalData = (float *)malloc(sizeof(float)*numEntries);
+	for (unsigned int i=0; i<numEntries; i+=3*3)
+	{
+		vec3 p1 = vec3(vertexData[i+0*3+0], vertexData[i+0*3+1], vertexData[i+0*3+2]);
+		vec3 p2 = vec3(vertexData[i+1*3+0], vertexData[i+1*3+1], vertexData[i+1*3+2]);
+		vec3 p3 = vec3(vertexData[i+2*3+0], vertexData[i+2*3+1], vertexData[i+2*3+2]);
+
+		vec3 n1 = cross(p2-p1, p3-p1);
+		// float n1mag = length(n1);
+		n1 = normalize(n1);
+
+		// vec3 n2 = cross(p1-p2, p3-p2);
+		// float n2mag = length(n2);
+		// n2 = normalize(n2);
+		
+		// vec3 n3 = cross(p1-p3, p2-p3);
+		// float n3mag = length(n3);
+		// n3 = normalize(n3);
+
+		normalData[i+0*3+0]=n1.x; normalData[i+0*3+1]=n1.y; normalData[i+0*3+2]=n1.z;
+		normalData[i+1*3+0]=n1.x; normalData[i+1*3+1]=n1.y; normalData[i+1*3+2]=n1.z;
+		normalData[i+2*3+0]=n1.x; normalData[i+2*3+1]=n1.y; normalData[i+2*3+2]=n1.z;
+	}
+
 	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*numEntries, vertexData, GL_STATIC_DRAW);
+	
+	GLuint normalbuffer;
+	glGenBuffers(1, &normalbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*numEntries, normalData, GL_STATIC_DRAW);
+
 	free(vertexData);
+	free(normalData);
 	
 	#ifdef PYTHON
 	ShutdownSignedDistance();
@@ -222,6 +253,17 @@ int main()
 		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 		glVertexAttribPointer(
 			0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
+
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+		glVertexAttribPointer(
+			1,                  // attribute. No particular reason for 0, but must match the layout in the shader.
 			3,                  // size
 			GL_FLOAT,           // type
 			GL_FALSE,           // normalized?
