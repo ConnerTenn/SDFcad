@@ -12,46 +12,47 @@ https://python.readthedocs.io/en/stable/extending/embedding.html#compiling
 #ifdef PYTHON
 
 #include <Python.h>
+#include <dlfcn.h>
 
-PyObject *PySignedDistance = 0;
+float (*PySignedDistance)(float x, float y, float z);
 
 void InitSignedDistance(const char *filename)
 {
-    Py_Initialize();
-    FILE *file = fopen(filename, "r+");
-    if (file == 0)
-    {
-        printf("Error opening %s\n", filename);
-        return;
-    }
-    PyRun_SimpleFileEx(file, filename, 1);
+	void *myso = dlopen("./PySignedDistance.so", RTLD_NOW);
+	if (myso == 0) { fprintf(stderr, "Error: could not load library PySignedDistance.so: %s\n", dlerror()); exit(1); }
 
-    PyObject *mainModule = PyImport_AddModule("__main__");
-    PyObject *globalDict = PyModule_GetDict(mainModule);
+	PyObject *(*PyInit_PySignedDistance)() = (PyObject *(*)())dlsym(myso, "PyInit_PySignedDistance");
+	if (PyInit_PySignedDistance == 0) { fprintf(stderr, "Error: could not load function PyInit_PySignedDistance: %s\n", dlerror()); exit(1); }
 
-    // Extract a reference to the function "func_name"
-    // from the global dictionary
-    PySignedDistance = PyDict_GetItemString(globalDict, "SignedDistance");
+	PySignedDistance = (float (*)(float, float, float))dlsym(myso, "SignedDistance");
+	if (PySignedDistance == 0) { fprintf(stderr, "Error: could not load function SignedDistance: %s\n", dlerror()); exit(1); }
 
+
+	if (PyImport_AppendInittab("PySignedDistance", PyInit_PySignedDistance) == -1) 
+	{
+		fprintf(stderr, "Error: could not extend in-built modules table\n");
+		exit(1);
+	}
+	
+	Py_Initialize();
+	
+	PyObject *pmodule = PyImport_ImportModule("PySignedDistance");
+	if (!pmodule) 
+	{
+		PyErr_Print(); 
+		fprintf(stderr, "Error: could not import module 'PySignedDistance'\n");
+		exit(1);
+	}
 }
 
 void ShutdownSignedDistance()
 {
-    Py_Finalize();
+	Py_Finalize();
 }
 
 float SignedDistance(vec3 pos)
 {
-    PyObject *pyReturn = PyObject_CallFunction(PySignedDistance, "fff", pos.x, pos.y, pos.z);
-    if (!pyReturn)
-    {
-        PyErr_Print();
-        exit(1);
-    }
-    float value = PyFloat_AsDouble(pyReturn);//PyFloat_AS_DOUBLE(pyReturn);
-    Py_DECREF(pyReturn);
-
-    return value;
+	return PySignedDistance(pos.x, pos.y, pos.z);
 }
 
 #else

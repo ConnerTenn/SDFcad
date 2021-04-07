@@ -6,3 +6,7 @@ RayMarch.fragshader
 
 .vscode/
 
+PySignedDistance.h
+PySignedDistance.c
+PySignedDistance.so
+
