@@ -1,8 +1,4 @@
 
-/*
-https://www.linuxjournal.com/article/8497
-https://python.readthedocs.io/en/stable/extending/embedding.html#compiling
-*/
 
 
 #include "SignedDistance.hpp"
@@ -10,6 +6,11 @@ https://python.readthedocs.io/en/stable/extending/embedding.html#compiling
 #include <stdio.h>
 
 #if PYTHON
+
+/*
+https://www.linuxjournal.com/article/8497
+https://python.readthedocs.io/en/stable/extending/embedding.html#compiling
+*/
 
 #include <Python.h>
 
@@ -54,7 +55,12 @@ float SignedDistance(vec3 pos)
 	return value;
 }
 
-#elif 1 //PYPY
+#elif PYPY
+
+/*
+https://doc.pypy.org/en/improve-docs/embedding.html
+*/
+
 #include "include/PyPy.h"
 
 char *pyfile;
