@@ -119,7 +119,7 @@ int main()
 #else
 	GLuint lookDirID = glGetUniformLocation(programID, "LookDir");
 
-	#ifdef PYTHON
+	#if PYTHON || PYPY
 	InitSignedDistance("SignedDistance.py");
 	#endif
 
@@ -165,7 +165,7 @@ int main()
 	free(vertexData);
 	free(normalData);
 	
-	#ifdef PYTHON
+	#if PYTHON || PYPY
 	ShutdownSignedDistance();
 	#endif
 #endif
