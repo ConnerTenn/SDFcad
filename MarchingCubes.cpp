@@ -94,6 +94,7 @@ void RecursiveMarch(vec3 xyz, float step, int recurse)//, int depth)
 }
 
 
+//Faster than RecursiveMarch3 when SignedDistance is fast to compute (aka C++ implementation)
 void RecursiveMarch2(vec3 xyz, float step, int recurse,
 	float dist1, float dist2, float dist3, float dist4, float dist5, float dist6, float dist7, float dist8,
 	bool d1En, bool d2En, bool d3En, bool d4En, bool d5En, bool d6En, bool d7En, bool d8En)
@@ -300,6 +301,8 @@ n
 
 
 */
+
+//Faster than RecursiveMarch2 when SignedDistance is slow to compute (aka python implementation)
 void RecursiveMarch3(vec3 pos, float step, int recurse,
 	Array2D top, Array2D bottom, Array2D left, Array2D right, Array2D front, Array2D back)
 {
@@ -423,7 +426,7 @@ float *MarchingCubes(unsigned int *numEntries)
 	struct timespec t1 = GetTime();
 	// RecursiveMarch(vec3(0.0f), 10.0f, 10);
 	// RecursiveMarch2(vec3(0.0f), 10.0f, 5, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
-	int recurse = 7;
+	int recurse = 8;
 	int sidelen = ipow(2, recurse+1)+1;
 	RecursiveMarch3(vec3(0.0f), 10.0f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));
 	struct timespec t2 = GetTime();
