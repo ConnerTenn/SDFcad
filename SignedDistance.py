@@ -1,6 +1,12 @@
 
+#include "include/PyPy.h"
+#include <stdio.h>
+
+from cffi import FFI
+ffi = FFI()
+
 from math import *
-import numpy as np
+import _numpy as np
 
 def vec3(x,y,z):
 	return np.array([[x],[y],[z]])
@@ -25,6 +31,7 @@ def sdUnion(d0, d1):
 def sdInter(d0, d1):
 	return max(d0, d1)
 
+@ffi.callback('float(float, float, float)')
 def SignedDistance(x,y,z):
 	# print(x,y,z)
 	pos = vec3(x,y,z)
@@ -45,3 +52,6 @@ def SignedDistance(x,y,z):
 	# print(d)
 	return sdUnion(d, d2)
 
+# ffi.cdef('void callback(float (*func)(float, float, float));')
+c_func = ffi.cast('float(*)(float(*)(float, float, float))', c_argument)
+c_func(SignedDistance)

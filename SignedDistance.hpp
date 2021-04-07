@@ -4,10 +4,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
-#define PYTHON
+#define PYTHON 0
+#define PYPY 1
 
 
-#ifdef PYTHON
+#if PYTHON || PYPY
 void InitSignedDistance(const char *filename);
 void ShutdownSignedDistance();
 #endif
