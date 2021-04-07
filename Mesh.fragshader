@@ -5,9 +5,28 @@ in vec4 gl_FragCoord;
 in vec3 color;
 in vec3 norm;
 
+uniform vec3 LookDir;
+
 out vec3 fragColor;
+
+vec3 shading() 
+{	
+	vec3 final = vec3( 0.0 );
+	
+	// light 0
+	{
+		// vec3 light_pos   = vec3(1.0, 1.0, 1.0);
+		vec3 light_color = vec3(1.0, 0.7, 0.3);
+	
+		vec3 diffuse  = vec3(max(0.0, dot(LookDir, norm)));
+		
+		final += light_color * diffuse; 
+	}
+	
+	return final;
+}
 
 void main()
 {
-	fragColor = norm * gl_FragCoord.w;
+	fragColor = shading() * gl_FragCoord.w;
 }

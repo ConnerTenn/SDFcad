@@ -117,6 +117,8 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
 #else
+	GLuint lookDirID = glGetUniformLocation(programID, "LookDir");
+
 	#ifdef PYTHON
 	InitSignedDistance("SignedDistance.py");
 	#endif
@@ -246,6 +248,10 @@ int main()
 		glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
 		glm::mat4 mvp        = Projection * viewMat; // Remember, matrix multiplication is the other way around
 		glUniformMatrix4fv(MvpID, 1, false, &mvp[0][0]);
+
+		glm::vec4 looktmp = (glm::rotate(glm::mat4(1), yaw, glm::vec3(0, 1, 0)) * glm::rotate(glm::mat4(1), pitch, glm::vec3(1, 0, 0)) * vec4(0,0,1,1));
+		glm::vec3 lookDir = normalize(vec3(looktmp.x, looktmp.y, looktmp.z));
+		glUniform3f(lookDirID, lookDir.x, lookDir.y, lookDir.z);
 #endif
 
 		// 1rst attribute buffer : vertices
