@@ -60,7 +60,7 @@ def SignedDistance(x, y, z):
 		sin(p1.Z*2*pi*10.0)/100.0
 
 	# print(d)
-	return sdUnion(d, d2)
+	return min([d, d2, sdBox(translate(pos, Vec3(0,-0.8,0)), Vec3(0.3,0.3,0.3)), sdSphere(translate(pos, Vec3(0,0.67,0)), 0.3)])
 
 
 # ffi.cdef('void callback(float (*func)(float, float, float));')
