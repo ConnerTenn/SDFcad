@@ -43,6 +43,11 @@ void ShutdownSignedDistance()
 float SignedDistance(vec3 pos)
 {
     PyObject *pyReturn = PyObject_CallFunction(PySignedDistance, "fff", pos.x, pos.y, pos.z);
+    if (!pyReturn)
+    {
+        PyErr_Print();
+        exit(1);
+    }
     float value = PyFloat_AsDouble(pyReturn);//PyFloat_AS_DOUBLE(pyReturn);
     Py_DECREF(pyReturn);
 
