@@ -1,12 +1,25 @@
 
 from math import *
-import numpy as np
 
-def vec3(x,y,z):
-	return np.array([[x],[y],[z]])
+class Vec3:
+	def __init__(self, x, y, z):
+		self.X = x
+		self.Y = y
+		self.Z = z
+	
+	def __add__(self, vec):
+		return Vec3(self.X + vec.X, self.Y + vec.Y, self.Z + vec.Z)
+	def __sub__(self, vec):
+		return Vec3(self.X - vec.X, self.Y - vec.Y, self.Z - vec.Z)
+
+	def __abs__(self):
+		return Vec3(abs(self.X), abs(self.Y), abs(self.Z))
+
+	def max(self, s):
+		return Vec3(max(self.X, s), max(self.Y, s), max(self.Z, s))
 
 def length(vec):
-	return np.linalg.norm(vec)
+	return sqrt(vec.X*vec.X + vec.Y*vec.Y + vec.Z*vec.Z)
 
 def translate(pos, move):
 	return pos - move
@@ -16,7 +29,7 @@ def sdSphere(pos, r):
 
 def sdBox(p, b):
 	d = abs(p) - b
-	return min(max(d[0],max(d[1],d[2])),0.0) + length(np.maximum(d,0.0))
+	return min(max(d.X,max(d.Y,d.Z)),0.0) + length(d.max(0))
 
 
 def sdUnion(d0, d1):
@@ -25,22 +38,22 @@ def sdUnion(d0, d1):
 def sdInter(d0, d1):
 	return max(d0, d1)
 
-def SignedDistance(x,y,z):
+def SignedDistance(x, y, z):
 	# print(x,y,z)
-	pos = vec3(x,y,z)
+	pos = Vec3(x,y,z)
 	# print(pos)
 
-	p1 = translate(pos, vec3(0.6,0,0))
-	p2 = translate(pos, vec3(-0.6,0,0))
+	p1 = translate(pos, Vec3(0.6,0,0))
+	p2 = translate(pos, Vec3(-0.6,0,0))
 
-	d0 = sdBox(p1, vec3(0.5,0.5,0.5))
+	d0 = sdBox(p1, Vec3(0.5,0.5,0.5))
 	d1 = sdSphere(p1, 0.6)
 	d2 = sdSphere(p2, 0.6)
 	
 	d = sdInter(d1, d0) + \
-		sin(p1[1]*2*pi*10.0)/50.0 + \
-		sin(p1[0]*2*pi*10.0)/100.0 + \
-		sin(p1[2]*2*pi*10.0)/100.0
+		sin(p1.Y*2*pi*10.0)/50.0 + \
+		sin(p1.X*2*pi*10.0)/100.0 + \
+		sin(p1.Z*2*pi*10.0)/100.0
 
 	# print(d)
 	return sdUnion(d, d2)
