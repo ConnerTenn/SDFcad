@@ -211,10 +211,7 @@ public:
 		Stride(size), Size(size), XOff(size/2)
 	{
 		Data = new Distance[Size*Size];
-		for (int i=0; i<size*size; i++)
-		{
-			Data[i] = Distance{0,false};
-		}
+		memset(Data, 0, sizeof(Distance)*Size*Size);
 	}
 
 	~Array2D()
