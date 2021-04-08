@@ -8,13 +8,22 @@
 #include "SignedDistance.hpp"
 
 
-GLFWwindow* window;
+GLFWwindow* Window;
+int WindowWidth=1024, WindowHeight=768;
 
 GLfloat Zoom=3.5;
 
-void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+void ScrollCallback(GLFWwindow* Window, double xoffset, double yoffset)
 {
 	Zoom = Zoom * (yoffset>=0 ? 0.9 : 1.1);
+}
+
+void ResizeCallback(GLFWwindow* Window, int width, int height)
+{
+	WindowWidth = width;
+	WindowHeight = height;
+
+	glViewport(0, 0, WindowWidth, WindowHeight);
 }
 
 int main()
@@ -34,15 +43,17 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
-	// Open a window and create its OpenGL context
-	window = glfwCreateWindow(1024, 768, "SDFcad", NULL, NULL);
-	if (window == NULL)
+	// Open a Window and create its OpenGL context
+	Window = glfwCreateWindow(WindowWidth, WindowHeight, "SDFcad", NULL, NULL);
+	if (Window == NULL)
 	{
-		fprintf(stderr, "Failed to open GLFW window.\n");
+		fprintf(stderr, "Failed to open GLFW Window.\n");
 		glfwTerminate();
 		return -1;
 	}
-	glfwMakeContextCurrent(window);
+	glfwMakeContextCurrent(Window);
+
+	glfwSetWindowSizeCallback(Window, ResizeCallback);
 
 	// Initialize GLEW
 	if (glewInit() != GLEW_OK)
@@ -54,9 +65,9 @@ int main()
 	}
 
 	// Ensure we can capture the escape key being pressed below
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+	glfwSetInputMode(Window, GLFW_STICKY_KEYS, GL_TRUE);
 
-	glfwSetScrollCallback(window, ScrollCallback);
+	glfwSetScrollCallback(Window, ScrollCallback);
 
 	// Dark blue background
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -138,8 +149,8 @@ int main()
 
 		{
 
-			int mousepress = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE);
-			int shiftpress = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT);
+			int mousepress = glfwGetMouseButton(Window, GLFW_MOUSE_BUTTON_MIDDLE);
+			int shiftpress = glfwGetKey(Window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(Window, GLFW_KEY_RIGHT_SHIFT);
 			if (shiftpress)
 			{
 				static bool hold = 0;
@@ -155,7 +166,7 @@ int main()
 				else if (mousepress == GLFW_PRESS)
 				{
 					double x, y;
-					glfwGetCursorPos(window, &x, &y);
+					glfwGetCursorPos(Window, &x, &y);
 
 					if (!hold)
 					{
@@ -166,7 +177,7 @@ int main()
 					}
 					else
 					{
-						vec4 newpos = looktmp*vec4(-(startx-x)/1024, (starty-y)/768, 0, 1);
+						vec4 newpos = looktmp*vec4(-(startx-x)/WindowHeight, (starty-y)/WindowHeight, 0, 1);
 						pos = startpos+vec3(newpos.x, newpos.y, newpos.z)*Zoom;
 					}
 				}
@@ -184,7 +195,7 @@ int main()
 				else if (mousepress == GLFW_PRESS)
 				{
 					double x, y;
-					glfwGetCursorPos(window, &x, &y);
+					glfwGetCursorPos(Window, &x, &y);
 
 					if (!hold)
 					{
@@ -196,8 +207,8 @@ int main()
 					}
 					else
 					{
-						pitch = startpitch + (2*3.1415)*(starty-y)/768;
-						yaw = startyaw + (2*3.1415)*(startx-x)/1024;
+						pitch = startpitch + (2*3.1415)*(starty-y)/WindowHeight;
+						yaw = startyaw + (2*3.1415)*(startx-x)/WindowWidth;
 					}
 				}
 			}
@@ -220,7 +231,7 @@ int main()
 			translate(mat4(1), pos) *
 			viewMat;
 
-		mat4 Projection = perspective(radians(45.0f), 4.0f / 3.0f, 0.001f, 100.0f);
+		mat4 Projection = perspective(radians(45.0f), (float)WindowWidth/WindowHeight, 0.001f, 100.0f);
 		mat4 mvp        = Projection * viewMat; // Remember, matrix multiplication is the other way around
 		glUniformMatrix4fv(MvpID, 1, false, &mvp[0][0]);
 
@@ -259,18 +270,18 @@ int main()
 
 		
 		// Swap buffers
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(Window);
 		glfwPollEvents();
 
-	} // Check if the ESC key was pressed or the window was closed
-	while (glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
+	} // Check if the ESC key was pressed or the Window was closed
+	while (glfwGetKey(Window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(Window) == 0);
 
 	// Cleanup VBO and shader
 	glDeleteBuffers(1, &vertexbuffer);
 	glDeleteProgram(programID);
 	glDeleteVertexArrays(1, &VertexArrayID);
 
-	// Close OpenGL window and terminate GLFW
+	// Close OpenGL Window and terminate GLFW
 	glfwTerminate();
 
 	return 0;
