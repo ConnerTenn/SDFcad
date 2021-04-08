@@ -16,14 +16,14 @@ vec3 Fresnel(vec3 F0, vec3 h, vec3 l)
 }
 
 vec3 Shading() 
-{	
+{
 	vec3 final = vec3( 0.0 );
 	
 	// vec3 refl = reflect(LookDir, norm);
 	
 	float shininess = 16.0;
-    vec3 Ks = vec3( 0.5 );
-    vec3 Kd = vec3( 1.0 );
+	vec3 Ks = vec3( 0.5 );
+	vec3 Kd = vec3( 1.0 );
 
 	// light 0
 	{

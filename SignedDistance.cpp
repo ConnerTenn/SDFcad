@@ -1,15 +1,11 @@
 
-
-
 #include "SignedDistance.hpp"
 
 #include <stdio.h>
 
-
 /*
 https://doc.pypy.org/en/improve-docs/embedding.html
 */
-
 #include "include/PyPy.h"
 
 char *pyfile;

@@ -1,16 +1,8 @@
 
 #include "Common.hpp"
 
-#include <stdio.h>
-#include <iostream>
-#include <stdlib.h>
-
 #include <GL/glew.h> //Include GLEW
 #include <GLFW/glfw3.h> //Include GLFW
-// Include GLM
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-using namespace glm;
 
 #include "shader.hpp"
 #include "SignedDistance.hpp"
@@ -154,7 +146,7 @@ int main()
 				static double startx, starty;
 				static vec3 startpos;
 
-				glm::mat4 looktmp = (glm::rotate(glm::mat4(1), yaw, glm::vec3(0, 1, 0))*glm::rotate(glm::mat4(1), pitch, glm::vec3(1, 0, 0)));
+				mat4 looktmp = (rotate(mat4(1), yaw, vec3(0, 1, 0))*rotate(mat4(1), pitch, vec3(1, 0, 0)));
 
 				if (mousepress == GLFW_RELEASE && hold)
 				{
@@ -211,16 +203,6 @@ int main()
 			}
 		}
 
-		// for (int i=0; i<4; i++)
-		// {
-		// 	for (int j=0; j<4; j++)
-		// 	{
-		// 		printf("%f ", viewMat[i][j]);
-		// 	}
-		// 	printf("\n");
-		// }
-		// printf("\n");
-
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -228,22 +210,22 @@ int main()
 		// Use our shader
 		glUseProgram(programID);
 
-		glm::vec3 camPosition = {0, 0, 0};
-		glm::vec3 camTarget = {0, 0, -1};
-		glm::mat4 viewMat = glm::lookAt(camPosition, camTarget, glm::vec3{0,1,0});
+		vec3 camPosition = {0, 0, 0};
+		vec3 camTarget = {0, 0, -1};
+		mat4 viewMat = lookAt(camPosition, camTarget, vec3{0,1,0});
 		viewMat = 
-			glm::translate(glm::mat4(1), glm::vec3(0, 0, -Zoom)) *
-			glm::rotate(glm::mat4(1), -pitch, glm::vec3(1, 0, 0)) *
-			glm::rotate(glm::mat4(1), -yaw, glm::vec3(0, 1, 0)) *
-			glm::translate(glm::mat4(1), pos) *
+			translate(mat4(1), vec3(0, 0, -Zoom)) *
+			rotate(mat4(1), -pitch, vec3(1, 0, 0)) *
+			rotate(mat4(1), -yaw, vec3(0, 1, 0)) *
+			translate(mat4(1), pos) *
 			viewMat;
 
-		glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.001f, 100.0f);
-		glm::mat4 mvp        = Projection * viewMat; // Remember, matrix multiplication is the other way around
+		mat4 Projection = perspective(radians(45.0f), 4.0f / 3.0f, 0.001f, 100.0f);
+		mat4 mvp        = Projection * viewMat; // Remember, matrix multiplication is the other way around
 		glUniformMatrix4fv(MvpID, 1, false, &mvp[0][0]);
 
-		glm::vec4 looktmp = (glm::rotate(glm::mat4(1), yaw, glm::vec3(0, 1, 0)) * glm::rotate(glm::mat4(1), pitch, glm::vec3(1, 0, 0)) * vec4(0,0,1,1));
-		glm::vec3 lookDir = normalize(vec3(looktmp.x, looktmp.y, looktmp.z));
+		vec4 looktmp = (rotate(mat4(1), yaw, vec3(0, 1, 0)) * rotate(mat4(1), pitch, vec3(1, 0, 0)) * vec4(0,0,1,1));
+		vec3 lookDir = normalize(vec3(looktmp.x, looktmp.y, looktmp.z));
 		glUniform3f(lookDirID, lookDir.x, lookDir.y, lookDir.z);
 
 		// 1rst attribute buffer : vertices
@@ -270,7 +252,6 @@ int main()
 		);
 
 		// Draw the triangles!
-		
 		glDrawArrays(GL_TRIANGLES, 0, numEntries);
 
 		glDisableVertexAttribArray(0);

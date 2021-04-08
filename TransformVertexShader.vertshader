@@ -5,12 +5,12 @@ layout(location = 0) in vec3 vertPos;
 layout(location = 1) in vec3 vertNorm;
 uniform mat4 MVP;
 
-// Output data ; will be interpolated for each fragment.
+// Output data; will be interpolated for each fragment.
 out vec3 color;
 out vec3 norm;
 
-void main(){	
-
+void main()
+{
 	// Output position of the vertex, in clip space : MVP * position
 	gl_Position =  MVP*vec4(vertPos,1);
 	norm = vertNorm;//(MVP*vec4(vertNorm,1)).xyz;

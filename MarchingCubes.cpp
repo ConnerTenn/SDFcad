@@ -1,13 +1,6 @@
 
 #include "Common.hpp"
 
-#include <iostream>
-#include <stdlib.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-using namespace glm;
-
 #define INTERPOLATE
 #include "CubeTables.hpp"
 #undef INTERPOLATE
@@ -428,8 +421,8 @@ float *MarchingCubes(unsigned int *numEntries)
 	// RecursiveMarch3(vec3(0.0f), 10.0f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));
 	struct timespec t2 = GetTime();
 
-    printf("Marching Cubes Calculation Time: ");
-    PrintDuration(t1, t2);
+	printf("Marching Cubes Calculation Time: ");
+	PrintDuration(t1, t2);
 	printf("\n");
 
 	*numEntries = NumEntries;
