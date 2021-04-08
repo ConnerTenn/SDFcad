@@ -16,8 +16,6 @@ using namespace glm;
 #include "SignedDistance.hpp"
 
 
-// #define RAYMARCH
-
 GLFWwindow* window;
 
 GLfloat Zoom=3.5;
@@ -82,11 +80,7 @@ int main()
 	glBindVertexArray(VertexArrayID);
 
 	// Create and compile our GLSL program from the shaders
-#ifdef RAYMARCH
-	GLuint programID = LoadShaders( "TransformVertexShader.vertshader", "RayMarch.fragshader" );
-#else
 	GLuint programID = LoadShaders( "TransformVertexShader.vertshader", "Mesh.fragshader" );
-#endif
 	if (programID==(GLuint)-1)
 	{
 		return -1;
@@ -95,33 +89,10 @@ int main()
 
 	GLuint MvpID = glGetUniformLocation(programID, "MVP");
 
-#ifdef RAYMARCH
-	GLuint viewMatID = glGetUniformLocation(programID, "ViewMat"); 
 
-
-	// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
-	// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
-	static const GLfloat g_vertex_buffer_data[] = { 
-		-1.0f,-1.0f,0.0f,
-		-1.0f,1.0f,0.0f,
-		1.0f,-1.0f,0.0f,
-		
-		-1.0f,1.0f,0.0f,
-		1.0f,1.0f,0.0f,
-		1.0f,-1.0f,0.0f,
-	};
-
-	GLuint vertexbuffer;
-	glGenBuffers(1, &vertexbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-
-#else
 	GLuint lookDirID = glGetUniformLocation(programID, "LookDir");
 
-	#if PYTHON || PYPY
 	InitSignedDistance("SignedDistance.py");
-	#endif
 
 	std::cout << "Generating Marching Cubes...\n";
 	unsigned int numEntries;
@@ -165,10 +136,7 @@ int main()
 	free(vertexData);
 	free(normalData);
 	
-	#if PYTHON || PYPY
 	ShutdownSignedDistance();
-	#endif
-#endif
 
 	std::cout << "Entering Main Loop\n";
 	do
@@ -260,19 +228,6 @@ int main()
 		// Use our shader
 		glUseProgram(programID);
 
-#ifdef RAYMARCH
-		glm::vec3 camPosition = {0, 0, 0};
-		glm::vec3 camTarget = {0, 0, -1};
-		glm::mat4 viewMat = glm::lookAt(camPosition, camTarget, glm::vec3{0,1,0});
-		viewMat = glm::rotate(glm::mat4(1), yaw, glm::vec3(0, 1, 0)) * 
-			glm::rotate(glm::mat4(1), pitch, glm::vec3(1, 0, 0)) * 
-			glm::translate(glm::mat4(1), glm::vec3(0, 0, Zoom)) *
-			viewMat;
-
-		glm::mat4 mvp = glm::mat4(1);
-		glUniformMatrix4fv(MvpID, 1, false, &mvp[0][0]);
-		glUniformMatrix4fv(viewMatID, 1, false, &viewMat[0][0]);
-#else
 		glm::vec3 camPosition = {0, 0, 0};
 		glm::vec3 camTarget = {0, 0, -1};
 		glm::mat4 viewMat = glm::lookAt(camPosition, camTarget, glm::vec3{0,1,0});
@@ -290,7 +245,6 @@ int main()
 		glm::vec4 looktmp = (glm::rotate(glm::mat4(1), yaw, glm::vec3(0, 1, 0)) * glm::rotate(glm::mat4(1), pitch, glm::vec3(1, 0, 0)) * vec4(0,0,1,1));
 		glm::vec3 lookDir = normalize(vec3(looktmp.x, looktmp.y, looktmp.z));
 		glUniform3f(lookDirID, lookDir.x, lookDir.y, lookDir.z);
-#endif
 
 		// 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
@@ -317,11 +271,7 @@ int main()
 
 		// Draw the triangles!
 		
-#ifdef RAYMARCH
-		glDrawArrays(GL_TRIANGLES, 0, 2*3); // 12*3 indices starting at 0 -> 12 triangles
-#else
 		glDrawArrays(GL_TRIANGLES, 0, numEntries);
-#endif
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
