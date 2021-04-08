@@ -211,10 +211,7 @@ public:
 		Stride(size), Size(size), XOff(size/2)
 	{
 		Data = new Distance[Size*Size];
-		for (int i=0; i<size*size; i++)
-		{
-			Data[i] = Distance{0,false};
-		}
+		memset(Data, 0, sizeof(Distance)*Size*Size);
 	}
 
 	~Array2D()
@@ -425,10 +422,10 @@ float *MarchingCubes(unsigned int *numEntries)
 
 	struct timespec t1 = GetTime();
 	// RecursiveMarch(vec3(0.0f), 10.0f, 10);
-	// RecursiveMarch2(vec3(0.0f), 10.0f, 5, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
-	int recurse = 8;
-	int sidelen = ipow(2, recurse+1)+1;
-	RecursiveMarch3(vec3(0.0f), 10.0f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));
+	RecursiveMarch2(vec3(0.0f), 10.0f, 10, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
+	// int recurse = 8;
+	// int sidelen = ipow(2, recurse+1)+1;
+	// RecursiveMarch3(vec3(0.0f), 10.0f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));
 	struct timespec t2 = GetTime();
 
     printf("Marching Cubes Calculation Time: ");

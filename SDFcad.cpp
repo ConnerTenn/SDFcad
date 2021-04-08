@@ -117,7 +117,9 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
 #else
-	#ifdef PYTHON
+	GLuint lookDirID = glGetUniformLocation(programID, "LookDir");
+
+	#if PYTHON || PYPY
 	InitSignedDistance("SignedDistance.py");
 	#endif
 
@@ -126,13 +128,44 @@ int main()
 	float *vertexData = MarchingCubes(&numEntries);
 	std::cout << "Marching Cubes generated (" << numEntries/3 << " vertices)\n";
 
+	float *normalData = (float *)malloc(sizeof(float)*numEntries);
+	for (unsigned int i=0; i<numEntries; i+=3*3)
+	{
+		vec3 p1 = vec3(vertexData[i+0*3+0], vertexData[i+0*3+1], vertexData[i+0*3+2]);
+		vec3 p2 = vec3(vertexData[i+1*3+0], vertexData[i+1*3+1], vertexData[i+1*3+2]);
+		vec3 p3 = vec3(vertexData[i+2*3+0], vertexData[i+2*3+1], vertexData[i+2*3+2]);
+
+		vec3 n1 = cross(p2-p1, p3-p1);
+		// float n1mag = length(n1);
+		n1 = normalize(n1);
+
+		// vec3 n2 = cross(p1-p2, p3-p2);
+		// float n2mag = length(n2);
+		// n2 = normalize(n2);
+		
+		// vec3 n3 = cross(p1-p3, p2-p3);
+		// float n3mag = length(n3);
+		// n3 = normalize(n3);
+
+		normalData[i+0*3+0]=n1.x; normalData[i+0*3+1]=n1.y; normalData[i+0*3+2]=n1.z;
+		normalData[i+1*3+0]=n1.x; normalData[i+1*3+1]=n1.y; normalData[i+1*3+2]=n1.z;
+		normalData[i+2*3+0]=n1.x; normalData[i+2*3+1]=n1.y; normalData[i+2*3+2]=n1.z;
+	}
+
 	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*numEntries, vertexData, GL_STATIC_DRAW);
-	free(vertexData);
 	
-	#ifdef PYTHON
+	GLuint normalbuffer;
+	glGenBuffers(1, &normalbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*numEntries, normalData, GL_STATIC_DRAW);
+
+	free(vertexData);
+	free(normalData);
+	
+	#if PYTHON || PYPY
 	ShutdownSignedDistance();
 	#endif
 #endif
@@ -141,34 +174,71 @@ int main()
 	do
 	{
 		static GLfloat pitch=0, yaw=0;
+		static vec3 pos;
 
 		{
-			static bool last = 0;
-			static double startx, starty;
-			static GLfloat startpitch=0, startyaw=0;
 
-			int press = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE);
-			if (press == GLFW_RELEASE && last)
+			int mousepress = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE);
+			int shiftpress = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT);
+			if (shiftpress)
 			{
-				last = 0;
-			}
-			else if (press == GLFW_PRESS)
-			{
-				double x, y;
-				glfwGetCursorPos(window, &x, &y);
+				static bool hold = 0;
+				static double startx, starty;
+				static vec3 startpos;
 
-				if (!last)
+				glm::mat4 looktmp = (glm::rotate(glm::mat4(1), yaw, glm::vec3(0, 1, 0))*glm::rotate(glm::mat4(1), pitch, glm::vec3(1, 0, 0)));
+
+				if (mousepress == GLFW_RELEASE && hold)
 				{
-					startx = x;
-					starty = y;
-					startpitch = pitch;
-					startyaw = yaw;
-					last=1;
+					hold = 0;
 				}
-				else
+				else if (mousepress == GLFW_PRESS)
 				{
-					pitch = startpitch + (2*3.1415)*(starty-y)/768;
-					yaw = startyaw + (2*3.1415)*(startx-x)/1024;
+					double x, y;
+					glfwGetCursorPos(window, &x, &y);
+
+					if (!hold)
+					{
+						startx = x;
+						starty = y;
+						startpos = pos;
+						hold=1;
+					}
+					else
+					{
+						vec4 newpos = looktmp*vec4(-(startx-x)/1024, (starty-y)/768, 0, 1);
+						pos = startpos+vec3(newpos.x, newpos.y, newpos.z)*Zoom;
+					}
+				}
+			}
+			else
+			{
+				static bool hold = 0;
+				static double startx, starty;
+				static GLfloat startpitch=0, startyaw=0;
+
+				if (mousepress == GLFW_RELEASE && hold)
+				{
+					hold = 0;
+				}
+				else if (mousepress == GLFW_PRESS)
+				{
+					double x, y;
+					glfwGetCursorPos(window, &x, &y);
+
+					if (!hold)
+					{
+						startx = x;
+						starty = y;
+						startpitch = pitch;
+						startyaw = yaw;
+						hold=1;
+					}
+					else
+					{
+						pitch = startpitch + (2*3.1415)*(starty-y)/768;
+						yaw = startyaw + (2*3.1415)*(startx-x)/1024;
+					}
 				}
 			}
 		}
@@ -210,11 +280,16 @@ int main()
 			glm::translate(glm::mat4(1), glm::vec3(0, 0, -Zoom)) *
 			glm::rotate(glm::mat4(1), -pitch, glm::vec3(1, 0, 0)) *
 			glm::rotate(glm::mat4(1), -yaw, glm::vec3(0, 1, 0)) *
+			glm::translate(glm::mat4(1), pos) *
 			viewMat;
 
-		glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+		glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.001f, 100.0f);
 		glm::mat4 mvp        = Projection * viewMat; // Remember, matrix multiplication is the other way around
 		glUniformMatrix4fv(MvpID, 1, false, &mvp[0][0]);
+
+		glm::vec4 looktmp = (glm::rotate(glm::mat4(1), yaw, glm::vec3(0, 1, 0)) * glm::rotate(glm::mat4(1), pitch, glm::vec3(1, 0, 0)) * vec4(0,0,1,1));
+		glm::vec3 lookDir = normalize(vec3(looktmp.x, looktmp.y, looktmp.z));
+		glUniform3f(lookDirID, lookDir.x, lookDir.y, lookDir.z);
 #endif
 
 		// 1rst attribute buffer : vertices
@@ -222,6 +297,17 @@ int main()
 		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 		glVertexAttribPointer(
 			0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
+
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+		glVertexAttribPointer(
+			1,                  // attribute. No particular reason for 0, but must match the layout in the shader.
 			3,                  // size
 			GL_FLOAT,           // type
 			GL_FALSE,           // normalized?

@@ -1,4 +1,7 @@
 
+from cffi import FFI
+ffi = FFI()
+
 from math import *
 
 class Vec3:
@@ -31,6 +34,10 @@ def sdBox(p, b):
 	d = abs(p) - b
 	return min(max(d.X,max(d.Y,d.Z)),0.0) + length(d.max(0))
 
+def sdBoxFast(pos, l):
+	b = abs(pos) - l
+	return max(max(b.X, b.Y), b.Z)
+
 
 def sdUnion(d0, d1):
 	return min(d0, d1)
@@ -38,6 +45,7 @@ def sdUnion(d0, d1):
 def sdInter(d0, d1):
 	return max(d0, d1)
 
+@ffi.callback('float(float, float, float)')
 def SignedDistance(x, y, z):
 	# print(x,y,z)
 	pos = Vec3(x,y,z)
@@ -46,7 +54,7 @@ def SignedDistance(x, y, z):
 	p1 = translate(pos, Vec3(0.6,0,0))
 	p2 = translate(pos, Vec3(-0.6,0,0))
 
-	d0 = sdBox(p1, Vec3(0.5,0.5,0.5))
+	d0 = sdBoxFast(p1, Vec3(0.5,0.5,0.5))
 	d1 = sdSphere(p1, 0.6)
 	d2 = sdSphere(p2, 0.6)
 	
@@ -56,5 +64,9 @@ def SignedDistance(x, y, z):
 		sin(p1.Z*2*pi*10.0)/100.0
 
 	# print(d)
-	return sdUnion(d, d2)
+	return min([d, d2, sdBoxFast(translate(pos, Vec3(0,-0.8,0)), Vec3(0.3,0.3,0.3)), sdSphere(translate(pos, Vec3(0,0.67,0)), 0.3)])
 
+
+# ffi.cdef('void callback(float (*func)(float, float, float));')
+c_func = ffi.cast('float(*)(float(*)(float, float, float))', c_argument)
+c_func(SignedDistance)
