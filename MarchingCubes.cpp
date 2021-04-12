@@ -14,6 +14,90 @@ unsigned int NumEntries;
 
 #define BUFF_STEP_SIZE (100*1000*3*3)
 
+float *Points = 0;
+
+void MarchingCubes(vec3 pos, float step, int resolution)
+{
+	int res = resolution+1;
+	pos = pos + vec3(-step/2.0f,-step/2.0f,-step/2.0f);
+	
+
+	typedef float points_t[res][res][res];
+	if (!Points)
+	{
+		Points = (float *)malloc(sizeof(float)*res*res*res);
+	}
+	points_t *points = (points_t *)Points;
+	(*points)[0][0][0] = 0; //Suppresses warning
+
+
+	for (int i=0; i<res*res*res; i++)
+	{
+		int x = i/(res*res);
+		int y = (i/res)%res;
+		int z = i%res;
+		vec3 point = pos+vec3(x*step/resolution, y*step/resolution, z*step/resolution);
+		(*points)[x][y][z] = SignedDistance(point);
+	}
+
+	for (int i=0; i<resolution*resolution*resolution; i++)
+	{
+		int x = i/(resolution*resolution);
+		int y = (i/resolution)%resolution;
+		int z = i%resolution;
+		// vec3 off = vec3(x+step/resolution, y+step/resolution, z+step/resolution);
+
+		TRIANGLE triangles[5];
+		GRIDCELL grid;
+		grid.p[0] = pos+vec3((x  )*step/resolution, y*step/resolution, (z  )*step/resolution);
+		grid.p[1] = pos+vec3((x+1)*step/resolution, y*step/resolution, (z  )*step/resolution);
+		grid.p[2] = pos+vec3((x+1)*step/resolution, y*step/resolution, (z+1)*step/resolution);
+		grid.p[3] = pos+vec3((x  )*step/resolution, y*step/resolution, (z+1)*step/resolution);
+
+		grid.p[4] = pos+vec3((x  )*step/resolution, (y+1)*step/resolution, (z  )*step/resolution);
+		grid.p[5] = pos+vec3((x+1)*step/resolution, (y+1)*step/resolution, (z  )*step/resolution);
+		grid.p[6] = pos+vec3((x+1)*step/resolution, (y+1)*step/resolution, (z+1)*step/resolution);
+		grid.p[7] = pos+vec3((x  )*step/resolution, (y+1)*step/resolution, (z+1)*step/resolution);
+
+
+		grid.val[0] = (*points)[x  ][y][z  ];
+		grid.val[1] = (*points)[x+1][y][z  ];
+		grid.val[2] = (*points)[x+1][y][z+1];
+		grid.val[3] = (*points)[x  ][y][z+1];
+
+		grid.val[4] = (*points)[x  ][y+1][z  ];
+		grid.val[5] = (*points)[x+1][y+1][z  ];
+		grid.val[6] = (*points)[x+1][y+1][z+1];
+		grid.val[7] = (*points)[x  ][y+1][z+1];
+
+		int numtri = Polygonise(grid, 0.0, triangles);
+
+		for (int i=0; i<numtri; i++)
+		{
+			VertexData[NumEntries++] = triangles[i].p[0].x;
+			VertexData[NumEntries++] = triangles[i].p[0].y;
+			VertexData[NumEntries++] = triangles[i].p[0].z;
+
+			VertexData[NumEntries++] = triangles[i].p[1].x;
+			VertexData[NumEntries++] = triangles[i].p[1].y;
+			VertexData[NumEntries++] = triangles[i].p[1].z;
+
+			VertexData[NumEntries++] = triangles[i].p[2].x;
+			VertexData[NumEntries++] = triangles[i].p[2].y;
+			VertexData[NumEntries++] = triangles[i].p[2].z;
+
+			if (NumEntries+9 >= VertDataSize)
+			{
+				VertDataSize += BUFF_STEP_SIZE;
+				std::cout << "Realloc: " << sizeof(float)*VertDataSize/1000/1000 << "MB\n";
+				VertexData = (float *)realloc(VertexData, sizeof(float)*VertDataSize);
+			}
+		}
+	}
+	
+}
+
+
 void RecursiveMarch(vec3 xyz, float step, int recurse)//, int depth)
 {
 	// for (int i=0; i<depth; i++)
@@ -414,8 +498,9 @@ float *MarchingCubes(unsigned int *numEntries)
 	NumEntries=0;
 
 	struct timespec t1 = GetTime();
+	MarchingCubes(vec3(0.0f), 1.6f, 155);
 	// RecursiveMarch(vec3(0.0f), 10.0f, 10);
-	RecursiveMarch2(vec3(0.0f), 10.0f, 10, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
+	// RecursiveMarch2(vec3(0.0f), 10.0f, 10, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
 	// int recurse = 8;
 	// int sidelen = ipow(2, recurse+1)+1;
 	// RecursiveMarch3(vec3(0.0f), 10.0f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));

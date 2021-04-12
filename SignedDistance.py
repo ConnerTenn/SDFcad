@@ -45,26 +45,23 @@ def sdUnion(d0, d1):
 def sdInter(d0, d1):
 	return max(d0, d1)
 
+def sdCappedCylinder(pos, h, r):
+	l = sqrt(pos.X**2 + pos.Z**2)
+	dx = abs(l) - r
+	dy = abs(pos.Y) - h
+	return min(max(dx,dy),0.0) + sqrt(max(dx,0)**2 + max(dy,0)**2)
+
 @ffi.callback('float(float, float, float)')
 def SignedDistance(x, y, z):
-	# print(x,y,z)
 	pos = Vec3(x,y,z)
-	# print(pos)
 
-	p1 = translate(pos, Vec3(0.6,0,0))
-	p2 = translate(pos, Vec3(-0.6,0,0))
+	f = max(sdSphere(pos, 1), sdBoxFast(pos, Vec3(1.5/2,1.5/2,1.5/2)))
 
-	d0 = sdBoxFast(p1, Vec3(0.5,0.5,0.5))
-	d1 = sdSphere(p1, 0.6)
-	d2 = sdSphere(p2, 0.6)
-	
-	d = sdInter(d1, d0) + \
-		sin(p1.Y*2*pi*10.0)/50.0 + \
-		sin(p1.X*2*pi*10.0)/100.0 + \
-		sin(p1.Z*2*pi*10.0)/100.0
+	posz = Vec3(pos.X, pos.Z, pos.Y)
+	posx = Vec3(pos.Y, pos.X, pos.Z)
+	t = min([sdCappedCylinder(posx, 2, 1/2), sdCappedCylinder(pos, 2, 1/2), sdCappedCylinder(posz, 2, 1/2) ])
 
-	# print(d)
-	return min([d, d2, sdBoxFast(translate(pos, Vec3(0,-0.8,0)), Vec3(0.3,0.3,0.3)), sdSphere(translate(pos, Vec3(0,0.67,0)), 0.3)])
+	return max(f, -t)
 
 
 # ffi.cdef('void callback(float (*func)(float, float, float));')
