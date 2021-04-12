@@ -100,7 +100,7 @@ int main()
 	std::cout << "Generating Marching Cubes...\n";
 	unsigned int numEntries;
 	float *vertexData = MarchingCubes(&numEntries);
-	std::cout << "Marching Cubes generated (" << numEntries/3 << " vertices)\n";
+	std::cout << "Marching Cubes generated (" << numEntries/3 << " vertices) (" << (numEntries/3)/3 << " triangles)\n";
 
 	float *normalData = (float *)malloc(sizeof(float)*numEntries);
 	for (unsigned int i=0; i<numEntries; i+=3*3)

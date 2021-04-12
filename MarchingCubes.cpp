@@ -20,7 +20,7 @@ void MarchingCubes(vec3 pos, float step, int resolution)
 {
 	int res = resolution+1;
 	pos = pos + vec3(-step/2.0f,-step/2.0f,-step/2.0f);
-	
+
 
 	typedef float points_t[res][res][res];
 	if (!Points)
@@ -88,7 +88,7 @@ void MarchingCubes(vec3 pos, float step, int resolution)
 
 			if (NumEntries+9 >= VertDataSize)
 			{
-				VertDataSize += BUFF_STEP_SIZE;
+				VertDataSize = VertDataSize*2.5;
 				std::cout << "Realloc: " << sizeof(float)*VertDataSize/1000/1000 << "MB\n";
 				VertexData = (float *)realloc(VertexData, sizeof(float)*VertDataSize);
 			}
@@ -491,6 +491,38 @@ void RecursiveMarch3(vec3 pos, float step, int recurse,
 }
 
 
+int pass = 0;
+//Faster than RecursiveMarch3 when SignedDistance is fast to compute (aka C++ implementation)
+void RecursiveMarch4(vec3 xyz, float step, int recurse,
+	float dist1, float dist2, float dist3, float dist4, float dist5, float dist6, float dist7, float dist8,
+	bool d1En, bool d2En, bool d3En, bool d4En, bool d5En, bool d6En, bool d7En, bool d8En)
+{
+	float dist = SignedDistance(xyz);
+
+	//abs(dist) <= sqrt(3)
+	if (abs(dist) <= step*2.0f)//*1.735f)
+	{
+		if (recurse)
+		{
+			RecursiveMarch4(xyz+vec3(-step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, dist1, 0,     0,     0,      0,    0,    dist, 0,        d1En,  false, false, false,  false, false, true,  false);
+			RecursiveMarch4(xyz+vec3( step/4.0f,-step/4.0f,-step/4.0f), step/2.0f, recurse-1, 0,     dist2, 0,     0,      0,    0,    0,    dist,     false, d2En,  false, false,  false, false, false, true );
+			RecursiveMarch4(xyz+vec3( step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1, 0,     0,     dist3, 0,      dist, 0,    0,    0,        false, false, d3En,  false,  true,  false, false, false);
+			RecursiveMarch4(xyz+vec3(-step/4.0f,-step/4.0f, step/4.0f), step/2.0f, recurse-1, 0,     0,     0,     dist4,  0,    dist, 0,    0,        false, false, false, d4En,   false, true,  false, false);
+
+			RecursiveMarch4(xyz+vec3(-step/4.0f, step/4.0f,-step/4.0f), step/2.0f, recurse-1, 0,    0,    dist, 0,         dist5, 0,     0,     0,     false, false, true,  false,  d5En,  false, false, false);
+			RecursiveMarch4(xyz+vec3( step/4.0f, step/4.0f,-step/4.0f), step/2.0f, recurse-1, 0,    0,    0,    dist,      0,     dist6, 0,     0,     false, false, false, true,   false, d6En,  false, false);
+			RecursiveMarch4(xyz+vec3( step/4.0f, step/4.0f, step/4.0f), step/2.0f, recurse-1, dist, 0,    0,    0,         0,     0,     dist7, 0,     true,  false, false, false,  false, false, d7En,  false);
+			RecursiveMarch4(xyz+vec3(-step/4.0f, step/4.0f, step/4.0f), step/2.0f, recurse-1, 0,    dist, 0,    0,         0,     0,     0,     dist8, false, true,  false, false,  false, false, false, d8En );
+		}
+		else
+		{
+			MarchingCubes(xyz, step, 12);
+		}
+	}
+	else { pass++; }
+}
+
+
 float *MarchingCubes(unsigned int *numEntries)
 {
 	VertDataSize = BUFF_STEP_SIZE;
@@ -498,17 +530,19 @@ float *MarchingCubes(unsigned int *numEntries)
 	NumEntries=0;
 
 	struct timespec t1 = GetTime();
-	MarchingCubes(vec3(0.0f), 1.6f, 155);
+	// MarchingCubes(vec3(0.0f), 1.6f, 155);
 	// RecursiveMarch(vec3(0.0f), 10.0f, 10);
 	// RecursiveMarch2(vec3(0.0f), 10.0f, 10, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
 	// int recurse = 8;
 	// int sidelen = ipow(2, recurse+1)+1;
 	// RecursiveMarch3(vec3(0.0f), 10.0f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));
+	RecursiveMarch4(vec3(0.0f), 1.6f, 5, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
 	struct timespec t2 = GetTime();
 
 	printf("Marching Cubes Calculation Time: ");
 	PrintDuration(t1, t2);
 	printf("\n");
+	printf("pass %d\n", pass);
 
 	*numEntries = NumEntries;
 	return VertexData;
