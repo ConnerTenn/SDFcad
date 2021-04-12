@@ -46,9 +46,11 @@ void ShutdownSignedDistance()
 	free(pyfile);
 }
 
+u32 SDCount = 0;
 
 float SignedDistance(vec3 pos)
 {
+	SDCount++;
 	return PySD(pos.x, pos.y, pos.z);
 }
 

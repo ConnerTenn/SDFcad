@@ -98,6 +98,26 @@ void MarchingCubes(vec3 pos, float step, int resolution)
 }
 
 
+void BatchingMarch(float range, int numsteps, int resolution)
+{
+	for (int x=-numsteps/2; x<=numsteps/2; x++)
+	{
+		for (int y=-numsteps/2; y<=numsteps/2; y++)
+		{
+			for (int z=-numsteps/2; z<=numsteps/2; z++)
+			{
+				vec3 pos = vec3(x*range/numsteps, y*range/numsteps, z*range/numsteps);
+
+				if (abs(SignedDistance(pos)) <= range/numsteps*2.0f)
+				{
+					MarchingCubes(pos, range/numsteps, resolution);
+				}
+			}
+		}
+	}
+}
+
+
 void RecursiveMarch(vec3 xyz, float step, int recurse)//, int depth)
 {
 	// for (int i=0; i<depth; i++)
@@ -536,13 +556,14 @@ float *MarchingCubes(unsigned int *numEntries)
 	// int recurse = 8;
 	// int sidelen = ipow(2, recurse+1)+1;
 	// RecursiveMarch3(vec3(0.0f), 10.0f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));
-	RecursiveMarch4(vec3(0.0f), 1.6f, 5, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
+	// RecursiveMarch4(vec3(0.0f), 1.6f, 5, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
+	BatchingMarch(1.6f, 18, 20);
 	struct timespec t2 = GetTime();
 
 	printf("Marching Cubes Calculation Time: ");
 	PrintDuration(t1, t2);
 	printf("\n");
-	printf("pass %d\n", pass);
+	printf("SDcount %d\n", SDCount);
 
 	*numEntries = NumEntries;
 	return VertexData;

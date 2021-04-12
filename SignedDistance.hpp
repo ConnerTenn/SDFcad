@@ -9,6 +9,6 @@ void InitSignedDistance(const char *filename);
 void ShutdownSignedDistance();
 float SignedDistance(vec3 pos);
 
-
+extern u32 SDCount;
 
 float *MarchingCubes(unsigned int *numEntries);
