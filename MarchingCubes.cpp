@@ -536,7 +536,7 @@ void RecursiveMarch4(vec3 xyz, float step, int recurse,
 		}
 		else
 		{
-			MarchingCubes(xyz, step, 12);
+			MarchingCubes(xyz, step, 80);
 		}
 	}
 	else { pass++; }
@@ -553,11 +553,11 @@ float *MarchingCubes(unsigned int *numEntries)
 	// MarchingCubes(vec3(0.0f), 1.6f, 155);
 	// RecursiveMarch(vec3(0.0f), 10.0f, 10);
 	// RecursiveMarch2(vec3(0.0f), 10.0f, 10, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
-	// int recurse = 8;
-	// int sidelen = ipow(2, recurse+1)+1;
-	// RecursiveMarch3(vec3(0.0f), 10.0f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));
-	// RecursiveMarch4(vec3(0.0f), 1.6f, 5, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
-	BatchingMarch(1.6f, 18, 20);
+	int recurse = 10;
+	int sidelen = ipow(2, recurse+1)+1;
+	RecursiveMarch3(vec3(0.0f), 1.6f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));
+	// RecursiveMarch4(vec3(0.0f), 1.6f, 3, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
+	// BatchingMarch(1.6f, 10, 80);
 	struct timespec t2 = GetTime();
 
 	printf("Marching Cubes Calculation Time: ");
