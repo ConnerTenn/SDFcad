@@ -1,20 +1,7 @@
 
-#include "SignedDistance.hpp"
 #include "Common.hpp"
+#include "SignedDistanceObjects.hpp"
 
-#include <stdio.h>
-
-void InitSignedDistance(const char *filename)
-{
-}
-void ShutdownSignedDistance()
-{
-}
-
-// float length(vec3 vec)
-// {
-// 	return sqrt(vec.x*vec.x + vec.y*vec.y + vec.z*vec.z);
-// }
 
 vec3 translate(vec3 pos, vec3 move)
 {
@@ -57,15 +44,11 @@ float sdCappedCylinder(vec3 pos, float h, float r)
 	return min(max(dx,dy),0.0f) + sqrt(pow(max(dx,0.0f),2.0f) + pow(max(dy,0.0f),2.0f));
 }
 
-u32 SDCount;
-float SignedDistance(vec3 pos)
+extern "C"
 {
-	SDCount++;
-	float f = max(sdSphere(pos, 1), sdBoxFast(pos, vec3(1.5/2,1.5/2,1.5/2)));
-
-	vec3 posz = vec3(pos.x, pos.z, pos.y);
-	vec3 posx = vec3(pos.y, pos.x, pos.z);
-	float t = min(sdCappedCylinder(posx, 2, 0.5f), min(sdCappedCylinder(pos, 2, 0.5f), sdCappedCylinder(posz, 2, 0.5f)));
-	return max(f, -t);
+float SignedDistance(float x, float y, float z)
+{
+	return SD(vec3(x,y,z));
+}
 }
 

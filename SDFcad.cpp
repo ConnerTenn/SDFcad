@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h> //Include GLFW
 
 #include "shader.hpp"
-#include "SignedDistance.hpp"
+#include "SignedDistanceHelper.hpp"
 
 
 GLFWwindow* Window;
@@ -95,7 +95,7 @@ int main()
 
 	GLuint lookDirID = glGetUniformLocation(programID, "LookDir");
 
-	InitSignedDistance("SignedDistance.py");
+	InitSignedDistance("SD.cpp");
 
 	std::cout << "Generating Marching Cubes...\n";
 	unsigned int numEntries;

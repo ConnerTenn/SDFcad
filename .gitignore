@@ -1,5 +1,6 @@
 
 *.o
+*.so
 
 SDFcad
 RayMarch.fragshader

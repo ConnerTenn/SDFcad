@@ -18,10 +18,10 @@ all: clean
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $^ -c -o $@
 
-SDFcad: SDFcad.o Common.o shader.o MarchingCubes.o SignedDistance.o
+SDFcad: SDFcad.o Common.o shader.o MarchingCubes.o SignedDistanceHelper.o
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 .PHONY : clean
 clean :
-	rm -f SDFcad *.o
+	rm -f SDFcad *.o *.so
 

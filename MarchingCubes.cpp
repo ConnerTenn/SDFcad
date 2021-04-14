@@ -4,7 +4,7 @@
 #define INTERPOLATE
 #include "CubeTables.hpp"
 #undef INTERPOLATE
-#include "SignedDistance.hpp"
+#include "SignedDistanceHelper.hpp"
 
 
 
@@ -563,7 +563,6 @@ float *MarchingCubes(unsigned int *numEntries)
 	printf("Marching Cubes Calculation Time: ");
 	PrintDuration(t1, t2);
 	printf("\n");
-	printf("SDcount %d\n", SDCount);
 
 	*numEntries = NumEntries;
 	return VertexData;
