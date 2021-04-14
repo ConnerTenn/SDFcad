@@ -1,10 +1,9 @@
 
-#include "SignedDistanceObjects.hpp"
+#include "SDFlib.hpp"
 
 
-float SD(vec3 pos)
+float SignedDistance(vec3 pos)
 {
-
 	float f = max(sdSphere(pos, 1), sdBoxFast(pos, vec3(1.5/2,1.5/2,1.5/2)));
 
 	vec3 posz = vec3(pos.x, pos.z, pos.y);

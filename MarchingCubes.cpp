@@ -4,7 +4,8 @@
 #define INTERPOLATE
 #include "CubeTables.hpp"
 #undef INTERPOLATE
-#include "SignedDistanceHelper.hpp"
+
+#include "SDFlib.hpp"
 
 
 
@@ -542,6 +543,8 @@ void RecursiveMarch4(vec3 xyz, float step, int recurse,
 	else { pass++; }
 }
 
+extern "C"
+{
 
 float *MarchingCubes(unsigned int *numEntries)
 {
@@ -568,3 +571,4 @@ float *MarchingCubes(unsigned int *numEntries)
 	return VertexData;
 }
 
+}

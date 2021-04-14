@@ -1,6 +1,6 @@
 
 #include "Common.hpp"
-#include "SignedDistanceObjects.hpp"
+#include "SDFlib.hpp"
 
 
 vec3 translate(vec3 pos, vec3 move)
@@ -44,11 +44,4 @@ float sdCappedCylinder(vec3 pos, float h, float r)
 	return min(max(dx,dy),0.0f) + sqrt(pow(max(dx,0.0f),2.0f) + pow(max(dy,0.0f),2.0f));
 }
 
-extern "C"
-{
-float SignedDistance(float x, float y, float z)
-{
-	return SD(vec3(x,y,z));
-}
-}
 

@@ -95,7 +95,7 @@ int main()
 
 	GLuint lookDirID = glGetUniformLocation(programID, "LookDir");
 
-	InitSignedDistance("SD.cpp");
+	InitSignedDistance("SignedDistance.cpp");
 
 	std::cout << "Generating Marching Cubes...\n";
 	unsigned int numEntries;

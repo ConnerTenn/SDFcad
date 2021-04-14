@@ -5,8 +5,5 @@ using namespace glm;
 
 void InitSignedDistance(const char *filename);
 void ShutdownSignedDistance();
-float *MarchingCubes(unsigned int *numEntries);
 
-
-float SignedDistance(vec3 pos);
-
+extern float *(*MarchingCubes)(unsigned int *numEntries);

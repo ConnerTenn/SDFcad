@@ -18,10 +18,8 @@ float sdInter(float d0, float d1);
 
 extern "C"
 {
-
-float SignedDistance(float x, float y, float z);
-
+float *MarchingCubes(unsigned int *numEntries);
 }
 
-float SD(vec3 pos);
+float SignedDistance(vec3 pos);
 

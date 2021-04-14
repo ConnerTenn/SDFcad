@@ -4,14 +4,15 @@
 
 #include <dlfcn.h>
 
-float (*SD)(float, float, float);
+float *(*MarchingCubes)(unsigned int *numEntries);
 
 void *SDlib = 0;
 
 void InitSignedDistance(const char *filename)
 {
 	char cmd[128];
-	sprintf(cmd, "gcc -Wall -fPIC -shared %s SignedDistanceObjects.cpp -o SignedDistance.so", filename);
+	// sprintf(cmd, "gcc -Wall -fPIC -shared %s SignedDistanceObjects.cpp -o SignedDistance.so", filename);
+	sprintf(cmd, "make SignedDistance.so SDF_FILE=%s", filename);
 	printf("%s\n", cmd);
 	system(cmd);
 
@@ -21,8 +22,8 @@ void InitSignedDistance(const char *filename)
 		printf("Error loading DLL: %s\n", dlerror());
 		exit(1);
 	}
-	SD = (float (*)(float, float, float))dlsym(SDlib, "SignedDistance");
-	if (!SD)
+	MarchingCubes = (float *(*)(unsigned int *))dlsym(SDlib, "MarchingCubes");
+	if (!MarchingCubes)
 	{
 		printf("Error loading DLL function: %s\n", dlerror());
 		exit(1);
@@ -33,11 +34,5 @@ void ShutdownSignedDistance()
 {
 	// dlclose(SDlib);
 }
-
-float SignedDistance(vec3 pos)
-{
-	return SD(pos.x, pos.y, pos.z);
-}
-
 
 
