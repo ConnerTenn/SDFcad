@@ -19,21 +19,17 @@ float sdUnion(float d0, float d1);
 float sdInter(float d0, float d1);
 
 
-//User Defined
-float SignedDistance(vec3 pos);
-
 
 extern "C"
 {
+// == User Defined ==
+void ConstructSignedDistance();
+void DestructSignedDistance();
+float SignedDistance(vec3 pos);
+// == End User Defined ==
 
 //Exported interface to the signed distance marching cubes implementation
 float *MarchingCubes(unsigned int *numEntries);
-
-//Exported wrapper for calling Signed Distance
-inline float SignedDistanceExt(float x, float y, float z)
-{
-	return SignedDistance(vec3(x,y,z));
-}
 
 }
 

@@ -1,6 +1,14 @@
 
 #include "SDFlib.hpp"
 
+void ConstructSignedDistance()
+{
+
+}
+
+void DestructSignedDistance()
+{
+}
 
 float SignedDistance(vec3 pos)
 {

@@ -10,5 +10,7 @@ void InitSignedDistance(const char *filename);
 void ShutdownSignedDistance();
 
 extern float *(*MarchingCubes)(unsigned int *numEntries);
+extern void (*ConstructSignedDistance)();
+extern void (*DestructSignedDistance)();
 
 #endif
