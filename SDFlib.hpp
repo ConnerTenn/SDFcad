@@ -1,4 +1,7 @@
 
+#ifndef _SDF_LIB_H_
+#define _SDF_LIB_H_
+
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,10 +19,22 @@ float sdUnion(float d0, float d1);
 float sdInter(float d0, float d1);
 
 
-extern "C"
-{
-float *MarchingCubes(unsigned int *numEntries);
-}
-
+//User Defined
 float SignedDistance(vec3 pos);
 
+
+extern "C"
+{
+
+//Exported interface to the signed distance marching cubes implementation
+float *MarchingCubes(unsigned int *numEntries);
+
+//Exported wrapper for calling Signed Distance
+inline float SignedDistanceExt(float x, float y, float z)
+{
+	return SignedDistance(vec3(x,y,z));
+}
+
+}
+
+#endif
