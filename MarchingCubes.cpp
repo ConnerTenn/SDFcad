@@ -109,7 +109,7 @@ void BatchingMarch(float range, int numsteps, int resolution)
 			{
 				vec3 pos = vec3(x*range/numsteps, y*range/numsteps, z*range/numsteps);
 
-				if (abs(SignedDistance(pos)) <= range/numsteps*2.0f)
+				if (abs(SignedDistance(pos)) <= range/numsteps*1.735f)//*2.0f) //sqrt(3.0f))
 				{
 					MarchingCubes(pos, range/numsteps, resolution);
 				}
@@ -200,7 +200,7 @@ void RecursiveMarch2(vec3 xyz, float step, int recurse,
 	float dist = SignedDistance(xyz);
 
 	//abs(dist) <= sqrt(3)
-	if (abs(dist) <= step*2.0f)//*1.735f)
+	if (abs(dist) <= step*1.735f)//*2.0f) //sqrt(3.0f))
 	{
 		if (recurse)
 		{
@@ -411,7 +411,7 @@ void RecursiveMarch3(vec3 pos, float step, int recurse,
 	xy[0][0] = Distance{dist, true};
 
 	//abs(dist) <= sqrt(3)
-	if (abs(dist) <= step*2.0f)//*1.735f)
+	if (abs(dist) <= step*1.735f)//*2.0f) //sqrt(3.0f))
 	{
 		if (recurse)
 		{
@@ -521,7 +521,7 @@ void RecursiveMarch4(vec3 xyz, float step, int recurse,
 	float dist = SignedDistance(xyz);
 
 	//abs(dist) <= sqrt(3)
-	if (abs(dist) <= step*2.0f)//*1.735f)
+	if (abs(dist) <= step*1.735f)//*2.0f) //sqrt(3.0f))
 	{
 		if (recurse)
 		{
