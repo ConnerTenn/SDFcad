@@ -17,7 +17,7 @@ typedef struct {
 } GRIDCELL;
 
 
-#define SMALL 0.00001
+// #define SMALL 0.00001
 /*
 	Linearly interpolate the position where an isosurface cuts
 	an edge between two vertices, each with their own scalar value
@@ -28,9 +28,9 @@ inline vec3 VertexInterp(float isolevel, vec3 p1, vec3 p2, float valp1, float va
 
 #ifdef INTERPOLATE
 	float mu;
-	if (abs(isolevel-valp1) < SMALL) { return p1; }
-	if (abs(isolevel-valp2) < SMALL) { return p2; }
-	if (abs(valp1-valp2) < SMALL) { return p1; }
+	// if (abs(isolevel-valp1) < SMALL) { return p1; }
+	// if (abs(isolevel-valp2) < SMALL) { return p2; }
+	// if (abs(valp1-valp2) < SMALL) { return p1; }
 
 	//Linear interpolaton
 	mu = (isolevel - valp1) / (valp2 - valp1);
