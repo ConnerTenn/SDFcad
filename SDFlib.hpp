@@ -74,6 +74,7 @@ public:
 		// std::cout << "SDF3 Const Ref Copy\n";
 		ObjectDecr();
 		Object = other.Object->Duplicate();
+		Object->ReferenceCount++;
 	}
 	void operator=(SDF3 &other)
 	{
@@ -113,10 +114,10 @@ class SDSphere : public _SDF3
 public:
 	SDSphere(float radius) : _SDF3()
 	{
-		// std::cout << "Create Sphere " << radius <<"\n";
+		// std::cout << "+ SDSphere\n";
 		Radius = radius;
 	}
-	~SDSphere() { }
+	~SDSphere() {} //{ std::cout << "- SDSphere\n"; }
 
 
 	_SDF3 *Duplicate() const
@@ -138,11 +139,11 @@ class SDTranslate : public _SDF3
 public:
 	SDTranslate(SDF3 object, vec3 move) : _SDF3()
 	{
-		// std::cout << "Create Translate " <<"\n";
+		// std::cout << "+ SDTranslate\n";
 		Object = object;
 		Move = move;
 	}
-	~SDTranslate() { }
+	~SDTranslate() {} //{ std::cout << "- SDTranslate\n"; }
 
 	_SDF3 *Duplicate() const
 	{
@@ -163,10 +164,11 @@ class SDUnion : public _SDF3
 public:
 	SDUnion(SDF3 object1, SDF3 object2) : _SDF3()
 	{
+		// std::cout << "+ SDUnion\n";
 		Object1 = object1;
 		Object2 = object2;
 	}
-	~SDUnion() { }
+	~SDUnion() {} //{ std::cout << "- SDUnion\n"; }
 
 	_SDF3 *Duplicate() const
 	{
