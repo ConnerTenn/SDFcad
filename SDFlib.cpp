@@ -89,4 +89,13 @@ SDF3 Intersect(SDF3 object1, SDF3 object2)
 {
 	return SDF3(new SDIntersect(object1, object2));
 }
+SDF3 Transform(SDF3 object, mat4 matrix)
+{
+	return SDF3(new SDTransform(object, matrix));
+}
+SDF3 Rotate(SDF3 object, float angle, vec3 axis)
+{
+	mat4 matrix = glm::rotate(mat4(1), angle, axis);
+	return SDF3(new SDTransform(object, matrix));
+}
 

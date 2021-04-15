@@ -42,6 +42,8 @@ SDF3 Translate(SDF3 object, vec3 move);
 SDF3 Union(SDF3 object1, SDF3 object2);
 SDF3 Difference(SDF3 object1, SDF3 object2);
 SDF3 Intersect(SDF3 object1, SDF3 object2);
+SDF3 Transform(SDF3 object, mat4 matrix);
+SDF3 Rotate(SDF3 object, float angle, vec3 axis);
 
 
 class SDF3
@@ -312,6 +314,31 @@ public:
 	float operator()(vec3 pos)
 	{
 		return max((*Object1.Object)(pos), (*Object2.Object)(pos));
+	}
+};
+
+class SDTransform : public _SDF3
+{
+	SDF3 Object;
+	mat4 TransformMat;
+public:
+	SDTransform(SDF3 object, mat4 matrix) : _SDF3()
+	{
+		Object = object;
+		TransformMat = matrix;
+
+	}
+	~SDTransform() {}
+
+	_SDF3 *Duplicate() const
+	{
+		return new SDTransform(Object, TransformMat);
+	}
+
+	float operator()(vec3 pos)
+	{
+		vec4 res = TransformMat * vec4(pos.x, pos.y, pos.z, 1);
+		return (*Object.Object)(vec3(res.x, res.y, res.z));
 	}
 };
 
