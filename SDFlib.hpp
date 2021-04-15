@@ -33,6 +33,8 @@ class SDF3;
 SDF3 Sphere(float radius);
 SDF3 Translate(SDF3 object, vec3 move);
 SDF3 Union(SDF3 object1, SDF3 object2);
+SDF3 Difference(SDF3 object1, SDF3 object2);
+SDF3 Intersect(SDF3 object1, SDF3 object2);
 
 
 class SDF3
@@ -104,6 +106,18 @@ public:
 	SDF3 operator+(SDF3 other)
 	{
 		return Union(*this, other);
+	}
+	SDF3 operator|(SDF3 other)
+	{
+		return Union(*this, other);
+	}
+	SDF3 operator-(SDF3 other)
+	{
+		return Difference(*this, other);
+	}
+	SDF3 operator&(SDF3 other)
+	{
+		return Intersect(*this, other);
 	}
 
 
@@ -183,6 +197,54 @@ public:
 	float operator()(vec3 pos)
 	{
 		return min((*Object1.Object)(pos), (*Object2.Object)(pos));
+	}
+};
+
+class SDDifference : public _SDF3
+{
+	SDF3 Object1;
+	SDF3 Object2;
+public:
+	SDDifference(SDF3 object1, SDF3 object2) : _SDF3()
+	{
+		// std::cout << "+ SDDifference\n";
+		Object1 = object1;
+		Object2 = object2;
+	}
+	~SDDifference() {} //{ std::cout << "- SDDifference\n"; }
+
+	_SDF3 *Duplicate() const
+	{
+		return new SDDifference(Object1, Object2);
+	}
+
+	float operator()(vec3 pos)
+	{
+		return max((*Object1.Object)(pos), -(*Object2.Object)(pos));
+	}
+};
+
+class SDIntersect : public _SDF3
+{
+	SDF3 Object1;
+	SDF3 Object2;
+public:
+	SDIntersect(SDF3 object1, SDF3 object2) : _SDF3()
+	{
+		// std::cout << "+ SDIntersect\n";
+		Object1 = object1;
+		Object2 = object2;
+	}
+	~SDIntersect() {} //{ std::cout << "- SDIntersect\n"; }
+
+	_SDF3 *Duplicate() const
+	{
+		return new SDIntersect(Object1, Object2);
+	}
+
+	float operator()(vec3 pos)
+	{
+		return max((*Object1.Object)(pos), (*Object2.Object)(pos));
 	}
 };
 

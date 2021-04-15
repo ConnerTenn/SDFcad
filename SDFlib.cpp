@@ -62,3 +62,13 @@ SDF3 Union(SDF3 object1, SDF3 object2)
 	return SDF3(new SDUnion(object1, object2));
 }
 
+SDF3 Difference(SDF3 object1, SDF3 object2)
+{
+	return SDF3(new SDDifference(object1, object2));
+}
+
+SDF3 Intersect(SDF3 object1, SDF3 object2)
+{
+	return SDF3(new SDIntersect(object1, object2));
+}
+
