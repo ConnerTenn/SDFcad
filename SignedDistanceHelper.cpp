@@ -14,6 +14,7 @@ void InitSignedDistance(const char *filename)
 {
 	char cmd[128];
 	// sprintf(cmd, "gcc -Wall -fPIC -shared %s SignedDistanceObjects.cpp -o SignedDistance.so", filename);
+	system("rm -f SignedDistance.so");
 	sprintf(cmd, "make SignedDistance.so SDF_FILE=%s", filename);
 	printf("%s\n", cmd);
 	system(cmd);

@@ -45,3 +45,9 @@ float sdCappedCylinder(vec3 pos, float h, float r)
 }
 
 
+
+
+SDF3 Sphere(float radius)
+{
+	return SDF3(new SDSphere(radius));
+}
