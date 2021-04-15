@@ -56,3 +56,9 @@ SDF3 Translate(SDF3 object, vec3 move)
 {
 	return SDF3(new SDTranslate(object, move));
 }
+
+SDF3 Union(SDF3 object1, SDF3 object2)
+{
+	return SDF3(new SDUnion(object1, object2));
+}
+

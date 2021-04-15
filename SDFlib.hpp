@@ -155,9 +155,37 @@ public:
 	}
 };
 
+class SDUnion : public _SDF3
+{
+	SDF3 Object1;
+	SDF3 Object2;
+public:
+	SDUnion(SDF3 object1, SDF3 object2) : _SDF3()
+	{
+		// std::cout << "Create Union " <<"\n";
+		Object1 = object1;
+		Object2 = object2;
+	}
+	~SDUnion()
+	{
+		// std::cout << "Destroy Union " <<"\n";
+	}
+
+	_SDF3 *Duplicate() const
+	{
+		return new SDUnion(Object1, Object2);
+	}
+
+	float operator()(vec3 pos)
+	{
+		return min((*Object1.Object)(pos), (*Object2.Object)(pos));
+	}
+};
+
 
 SDF3 Sphere(float radius);
 SDF3 Translate(SDF3 object, vec3 move);
+SDF3 Union(SDF3 object1, SDF3 object2);
 
 
 extern "C"

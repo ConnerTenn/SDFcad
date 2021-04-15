@@ -1,8 +1,15 @@
 
 #include "SDFlib.hpp"
 
+SDF3 Object;
+
 void ConstructSignedDistance()
 {
+	SDF3 obj = Sphere(0.2);
+	Object = Union(
+		Translate(obj, vec3(0.5,0,0)),
+		Sphere(0.2)
+		);
 }
 
 void DestructSignedDistance()
@@ -18,8 +25,6 @@ float SignedDistance(vec3 pos)
 	// float t = min(sdCappedCylinder(posx, 2, 0.5f), min(sdCappedCylinder(pos, 2, 0.5f), sdCappedCylinder(posz, 2, 0.5f)));
 	// return max(f, -t);
 
-	std::cout << "\n\n\n";
-	SDF3 obj = Sphere(0.2);
-	obj = Translate(obj, vec3(0.5,0,0));
-	return obj(pos);
+	// std::cout << "\n\n\n";
+	return Object(pos);
 }
