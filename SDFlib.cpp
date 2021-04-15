@@ -51,3 +51,8 @@ SDF3 Sphere(float radius)
 {
 	return SDF3(new SDSphere(radius));
 }
+
+SDF3 Translate(SDF3 object, vec3 move)
+{
+	return SDF3(new SDTranslate(object, move));
+}

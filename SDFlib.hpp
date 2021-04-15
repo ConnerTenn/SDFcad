@@ -18,60 +18,19 @@ class _SDF3
 {
 protected:
 public:
+	//Used for reference counting so object can be deleted when no longer in use.
+
 	int ReferenceCount = 0;
 	_SDF3()
 	{
 	}
 	virtual ~_SDF3()
 	{
-		// std::cout << "~_SDF3\n";
 	}
 
-	virtual _SDF3 *Duplicate() const
-	{
-		return new _SDF3();
-	}
-	virtual _SDF3 *operator&()
-	{
-		return this;
-	}
+	virtual _SDF3 *Duplicate() const = 0;
 
-	virtual float operator()(vec3 pos)
-	{
-		// std::cout << "_SDF3()\n";
-		return 0;
-	}
-};
-
-class SDSphere : public _SDF3
-{
-	float Radius;
-public:
-	SDSphere(float radius) : _SDF3()
-	{
-		std::cout << "Create Sphere " << radius <<"\n";
-		Radius = radius;
-	}
-	~SDSphere()
-	{
-		std::cout << "Destroy Sphere " << Radius <<"\n";
-	}
-
-
-	_SDF3 *Duplicate() const
-	{
-		return new SDSphere(Radius);
-	}
-	_SDF3 *operator&()
-	{
-		return this;
-	}
-
-	float operator()(vec3 pos)
-	{
-		// std::cout << "Sphere()\n";
-		return length(pos) - Radius;
-	}
+	virtual float operator()(vec3 pos) = 0;
 };
 
 
@@ -133,9 +92,73 @@ public:
 	{
 		ObjectDecr();
 	}
+
+
+	float operator()(vec3 pos)
+	{
+		return (*Object)(pos);
+	}
 };
 
+class SDSphere : public _SDF3
+{
+	float Radius;
+public:
+	SDSphere(float radius) : _SDF3()
+	{
+		// std::cout << "Create Sphere " << radius <<"\n";
+		Radius = radius;
+	}
+	~SDSphere()
+	{
+		// std::cout << "Destroy Sphere " << Radius <<"\n";
+	}
+
+
+	_SDF3 *Duplicate() const
+	{
+		return new SDSphere(Radius);
+	}
+
+	float operator()(vec3 pos)
+	{
+		// std::cout << "Sphere()\n";
+		return length(pos) - Radius;
+	}
+};
+
+class SDTranslate : public _SDF3
+{
+	SDF3 Object;
+	vec3 Move;
+public:
+	SDTranslate(SDF3 object, vec3 move) : _SDF3()
+	{
+		// std::cout << "Create Translate " <<"\n";
+		Object = object;
+		Move = move;
+	}
+	~SDTranslate()
+	{
+		// std::cout << "Destroy Translate " <<"\n";
+	}
+
+	_SDF3 *Duplicate() const
+	{
+		return new SDTranslate(Object, Move);
+	}
+
+	float operator()(vec3 pos)
+	{
+		// std::cout << "Translate()\n";
+		return (*Object.Object)(pos - Move);
+	}
+};
+
+
 SDF3 Sphere(float radius);
+SDF3 Translate(SDF3 object, vec3 move);
+
 
 extern "C"
 {
