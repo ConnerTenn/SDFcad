@@ -5,6 +5,10 @@
 #include "Common.hpp"
 
 
+//=====================
+//==     Objects     ==
+//=====================
+
 inline float SdfSphere(vec3 pos, float radius)
 {
 	return length(pos) - radius;
@@ -27,6 +31,10 @@ inline float SdfCylinder(vec3 pos, float height, float radius)
 		return min(max(dx,dy),0.0f) + sqrt(pow(max(dx,0.0f),2.0f) + pow(max(dy,0.0f),2.0f));
 }
 
+
+//=====================
+//==    Modifiers    ==
+//=====================
 
 inline vec3 SdfTranslate(vec3 pos, vec3 move)
 {
@@ -51,6 +59,29 @@ inline vec3 SdfTransform(vec3 pos, mat4 matrix)
 }
 
 
+
+//===================================
+//==    SDF Objects & Functions    ==
+//===================================
+
+class SDF3;
+
+//== Object Wrappers ==
+SDF3 Sphere(float radius);
+SDF3 SphereD(float diameter);
+SDF3 Box(vec3 size);
+SDF3 Cube(float size);
+SDF3 Cylinder(float height, float radius);
+
+//== Modifier Wrappers ==
+SDF3 Translate(SDF3 object, vec3 move);
+SDF3 Union(SDF3 object1, SDF3 object2);
+SDF3 Difference(SDF3 object1, SDF3 object2);
+SDF3 Intersect(SDF3 object1, SDF3 object2);
+SDF3 Transform(SDF3 object, mat4 matrix);
+SDF3 Rotate(SDF3 object, float angle, vec3 axis);
+
+//Virtual parent class. Used for polymorphic access to all SDF3 objects
 class _SDF3
 {
 public:
@@ -65,24 +96,7 @@ public:
 	virtual float operator()(vec3 pos) = 0;
 };
 
-class SDF3;
-
-//== Objects ==
-SDF3 Sphere(float radius);
-SDF3 SphereD(float diameter);
-SDF3 Box(vec3 size);
-SDF3 Cube(float size);
-SDF3 Cylinder(float height, float radius);
-
-//== Modifiers ==
-SDF3 Translate(SDF3 object, vec3 move);
-SDF3 Union(SDF3 object1, SDF3 object2);
-SDF3 Difference(SDF3 object1, SDF3 object2);
-SDF3 Intersect(SDF3 object1, SDF3 object2);
-SDF3 Transform(SDF3 object, mat4 matrix);
-SDF3 Rotate(SDF3 object, float angle, vec3 axis);
-
-
+//SDF3 container class for use in user code. Handles memory management of _SDF3 objects.
 class SDF3
 {
 public:
@@ -166,7 +180,7 @@ public:
 		return Intersect(*this, other);
 	}
 
-
+	//Evaluates the Signed Distance Function for a given point
 	float operator()(vec3 pos)
 	{
 		return (*Object)(pos);
@@ -184,10 +198,9 @@ class SDFSphere : public _SDF3
 public:
 	SDFSphere(float radius) : _SDF3()
 	{
-		// std::cout << "+ SDFSphere\n";
 		Radius = radius;
 	}
-	~SDFSphere() {} //{ std::cout << "- SDFSphere\n"; }
+	~SDFSphere() {}
 
 
 	_SDF3 *Duplicate() const
@@ -207,10 +220,9 @@ class SDFBox : public _SDF3
 public:
 	SDFBox(vec3 size) : _SDF3()
 	{
-		// std::cout << "+ SDFBox\n";
 		Size = size/2.0f;
 	}
-	~SDFBox() {} //{ std::cout << "- SDFBox\n"; }
+	~SDFBox() {}
 
 
 	_SDF3 *Duplicate() const
@@ -260,11 +272,10 @@ class SDFUnion : public _SDF3
 public:
 	SDFUnion(SDF3 object1, SDF3 object2) : _SDF3()
 	{
-		// std::cout << "+ SDFUnion\n";
 		Object1 = object1;
 		Object2 = object2;
 	}
-	~SDFUnion() {} //{ std::cout << "- SDFUnion\n"; }
+	~SDFUnion() {}
 
 	_SDF3 *Duplicate() const
 	{
@@ -284,11 +295,10 @@ class SDFDifference : public _SDF3
 public:
 	SDFDifference(SDF3 object1, SDF3 object2) : _SDF3()
 	{
-		// std::cout << "+ SDFDifference\n";
 		Object1 = object1;
 		Object2 = object2;
 	}
-	~SDFDifference() {} //{ std::cout << "- SDFDifference\n"; }
+	~SDFDifference() {}
 
 	_SDF3 *Duplicate() const
 	{
@@ -308,11 +318,10 @@ class SDFIntersect : public _SDF3
 public:
 	SDFIntersect(SDF3 object1, SDF3 object2) : _SDF3()
 	{
-		// std::cout << "+ SDFIntersect\n";
 		Object1 = object1;
 		Object2 = object2;
 	}
-	~SDFIntersect() {} //{ std::cout << "- SDFIntersect\n"; }
+	~SDFIntersect() {}
 
 	_SDF3 *Duplicate() const
 	{
@@ -332,11 +341,10 @@ class SDFTranslate : public _SDF3
 public:
 	SDFTranslate(SDF3 object, vec3 move) : _SDF3()
 	{
-		// std::cout << "+ SDFTranslate\n";
 		Object = object;
 		Move = move;
 	}
-	~SDFTranslate() {} //{ std::cout << "- SDFTranslate\n"; }
+	~SDFTranslate() {}
 
 	_SDF3 *Duplicate() const
 	{
@@ -377,6 +385,7 @@ public:
 
 extern "C"
 {
+	
 // == User Defined ==
 void ConstructSignedDistance();
 void DestructSignedDistance();

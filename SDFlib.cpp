@@ -3,7 +3,9 @@
 #include "SDFlib.hpp"
 
 
-//== Objects ==
+//=====================
+//==     Objects     ==
+//=====================
 
 SDF3 Sphere(float radius)
 {
@@ -27,7 +29,9 @@ SDF3 Cylinder(float height, float radius)
 }
 
 
-//== Modifiers ==
+//=====================
+//==    Modifiers    ==
+//=====================
 
 SDF3 Translate(SDF3 object, vec3 move)
 {
