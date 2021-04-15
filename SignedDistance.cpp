@@ -6,10 +6,7 @@ SDF3 Object;
 void ConstructSignedDistance()
 {
 	SDF3 obj = Sphere(0.2);
-	Object = Union(
-		Translate(obj, vec3(0.5,0,0)),
-		Sphere(0.2)
-		);
+	Object = Translate(obj, vec3(0.5,0,0)) + Sphere(0.2);
 }
 
 void DestructSignedDistance()

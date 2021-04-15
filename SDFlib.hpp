@@ -16,22 +16,23 @@ float sdInter(float d0, float d1);
 
 class _SDF3
 {
-protected:
 public:
 	//Used for reference counting so object can be deleted when no longer in use.
-
 	int ReferenceCount = 0;
-	_SDF3()
-	{
-	}
-	virtual ~_SDF3()
-	{
-	}
+
+	_SDF3() {}
+	virtual ~_SDF3() {}
 
 	virtual _SDF3 *Duplicate() const = 0;
 
 	virtual float operator()(vec3 pos) = 0;
 };
+
+class SDF3;
+
+SDF3 Sphere(float radius);
+SDF3 Translate(SDF3 object, vec3 move);
+SDF3 Union(SDF3 object1, SDF3 object2);
 
 
 class SDF3
@@ -39,6 +40,7 @@ class SDF3
 public:
 	_SDF3 *Object = 0;
 
+	//Handles reference tracking and automatic freeing
 	void ObjectDecr()
 	{
 		if (Object)
@@ -52,13 +54,12 @@ public:
 		Object = 0;
 	}
 
-	SDF3()
-	{
-	}
+	SDF3() { }
+
 	SDF3(_SDF3 *obj)
 	{
 		ObjectDecr();
-		Object = obj;//->Duplicate();
+		Object = obj;
 		Object->ReferenceCount++;
 	}
 	SDF3(SDF3 &other)
@@ -94,6 +95,12 @@ public:
 	}
 
 
+	SDF3 operator+(SDF3 other)
+	{
+		return Union(*this, other);
+	}
+
+
 	float operator()(vec3 pos)
 	{
 		return (*Object)(pos);
@@ -109,10 +116,7 @@ public:
 		// std::cout << "Create Sphere " << radius <<"\n";
 		Radius = radius;
 	}
-	~SDSphere()
-	{
-		// std::cout << "Destroy Sphere " << Radius <<"\n";
-	}
+	~SDSphere() { }
 
 
 	_SDF3 *Duplicate() const
@@ -138,10 +142,7 @@ public:
 		Object = object;
 		Move = move;
 	}
-	~SDTranslate()
-	{
-		// std::cout << "Destroy Translate " <<"\n";
-	}
+	~SDTranslate() { }
 
 	_SDF3 *Duplicate() const
 	{
@@ -162,14 +163,10 @@ class SDUnion : public _SDF3
 public:
 	SDUnion(SDF3 object1, SDF3 object2) : _SDF3()
 	{
-		// std::cout << "Create Union " <<"\n";
 		Object1 = object1;
 		Object2 = object2;
 	}
-	~SDUnion()
-	{
-		// std::cout << "Destroy Union " <<"\n";
-	}
+	~SDUnion() { }
 
 	_SDF3 *Duplicate() const
 	{
@@ -182,10 +179,6 @@ public:
 	}
 };
 
-
-SDF3 Sphere(float radius);
-SDF3 Translate(SDF3 object, vec3 move);
-SDF3 Union(SDF3 object1, SDF3 object2);
 
 
 extern "C"
