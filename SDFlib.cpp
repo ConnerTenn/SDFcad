@@ -47,26 +47,44 @@ float sdCappedCylinder(vec3 pos, float h, float r)
 
 
 
+//== Objects ==
+
 SDF3 Sphere(float radius)
 {
 	return SDF3(new SDSphere(radius));
 }
+SDF3 SphereD(float diameter)
+{
+	return SDF3(new SDSphere(diameter/2.0f));
+}
+SDF3 Box(vec3 size)
+{
+	return SDF3(new SDBox(size));
+}
+SDF3 Cube(float size)
+{
+	return SDF3(new SDBox(vec3(size)));
+}
+SDF3 Cylinder(float height, float radius)
+{
+	return SDF3(new SDCylinder(height, radius));
+}
+
+
+//== Modifiers ==
 
 SDF3 Translate(SDF3 object, vec3 move)
 {
 	return SDF3(new SDTranslate(object, move));
 }
-
 SDF3 Union(SDF3 object1, SDF3 object2)
 {
 	return SDF3(new SDUnion(object1, object2));
 }
-
 SDF3 Difference(SDF3 object1, SDF3 object2)
 {
 	return SDF3(new SDDifference(object1, object2));
 }
-
 SDF3 Intersect(SDF3 object1, SDF3 object2)
 {
 	return SDF3(new SDIntersect(object1, object2));

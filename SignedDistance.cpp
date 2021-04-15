@@ -7,7 +7,9 @@ void ConstructSignedDistance()
 {
 	SDF3 obj = Sphere(0.2);
 	SDF3 obj2 = obj;
-	Object = Translate(obj, vec3(0.5,0,0)) + (Sphere(0.2) - Translate(Sphere(0.2), vec3(0.1,0.1,0.1))) + (Translate(obj2, vec3(0,0.5,0)) & Translate(obj2, vec3(0,0.6,0)));
+	Object = Translate(obj, vec3(0.5,0,0)) + 
+		(Cylinder(0.45, 0.2) - Translate(Box(vec3(0.2)), vec3(0.1,0.1,0.1))) + 
+		(Translate(obj2, vec3(0,0.5,0)) & Translate(obj2, vec3(0,0.6,0)));
 }
 
 void DestructSignedDistance()

@@ -30,7 +30,14 @@ public:
 
 class SDF3;
 
+//== Objects ==
 SDF3 Sphere(float radius);
+SDF3 SphereD(float diameter);
+SDF3 Box(vec3 size);
+SDF3 Cube(float size);
+SDF3 Cylinder(float height, float radius);
+
+//== Modifiers ==
 SDF3 Translate(SDF3 object, vec3 move);
 SDF3 Union(SDF3 object1, SDF3 object2);
 SDF3 Difference(SDF3 object1, SDF3 object2);
@@ -127,6 +134,11 @@ public:
 	}
 };
 
+
+//=====================
+//==     Objects     ==
+//=====================
+
 class SDSphere : public _SDF3
 {
 	float Radius;
@@ -146,10 +158,65 @@ public:
 
 	float operator()(vec3 pos)
 	{
-		// std::cout << "Sphere()\n";
 		return length(pos) - Radius;
 	}
 };
+
+class SDBox : public _SDF3
+{
+	vec3 Size;
+public:
+	SDBox(vec3 size) : _SDF3()
+	{
+		// std::cout << "+ SDBox\n";
+		Size = size;
+	}
+	~SDBox() {} //{ std::cout << "- SDBox\n"; }
+
+
+	_SDF3 *Duplicate() const
+	{
+		return new SDBox(Size);
+	}
+
+	float operator()(vec3 pos)
+	{
+		vec3 b = abs(pos) - Size;
+		return max(max(b.x, b.y), b.z);
+	}
+};
+
+class SDCylinder : public _SDF3
+{
+	float Height;
+	float Radius;
+public:
+	SDCylinder(float height, float radius) : _SDF3()
+	{
+		Height = height;
+		Radius = radius;
+	}
+	~SDCylinder() {}
+
+
+	_SDF3 *Duplicate() const
+	{
+		return new SDCylinder(Height, Radius);
+	}
+
+	float operator()(vec3 pos)
+	{
+		float l = sqrt(pow(pos.x,2.0f) + pow(pos.z,2.0f));
+		float dx = abs(l) - Radius;
+		float dy = abs(pos.y) - Height;
+		return min(max(dx,dy),0.0f) + sqrt(pow(max(dx,0.0f),2.0f) + pow(max(dy,0.0f),2.0f));
+	}
+};
+
+
+//=====================
+//==    Modifiers    ==
+//=====================
 
 class SDTranslate : public _SDF3
 {
