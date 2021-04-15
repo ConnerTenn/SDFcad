@@ -42,5 +42,5 @@ vec3 Shading()
 
 void main()
 {
-	fragColor = Shading() * pow(gl_FragCoord.w, 0.5);
+	fragColor = Shading();// * pow(gl_FragCoord.w, 0.5);
 }
