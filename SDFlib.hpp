@@ -66,33 +66,38 @@ public:
 	{
 		// std::cout << "SDF3 Ref Copy\n";
 		ObjectDecr();
-		Object = other.Object->Duplicate();
+		Object = other.Object;//->Duplicate();
 		Object->ReferenceCount++;
 	}
 	SDF3(const SDF3 &other)
 	{
 		// std::cout << "SDF3 Const Ref Copy\n";
 		ObjectDecr();
-		Object = other.Object->Duplicate();
+		Object = other.Object;//->Duplicate();
 		Object->ReferenceCount++;
 	}
 	void operator=(SDF3 &other)
 	{
 		// std::cout << "SDF3 Assign\n";
 		ObjectDecr();
-		Object = other.Object->Duplicate();
+		Object = other.Object;//->Duplicate();
 		Object->ReferenceCount++;
 	}
 	void operator=(const SDF3 &other)
 	{
 		// std::cout << "SDF3 Const Assign\n";
 		ObjectDecr();
-		Object = other.Object->Duplicate();
+		Object = other.Object;//->Duplicate();
 		Object->ReferenceCount++;
 	}
 	~SDF3()
 	{
 		ObjectDecr();
+	}
+
+	SDF3 Duplicate()
+	{
+		return SDF3(Object->Duplicate());
 	}
 
 
