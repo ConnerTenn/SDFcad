@@ -14,7 +14,7 @@ void ConstructSignedDistance()
 
 void DestructSignedDistance()
 {
-	Object.~SDF3();
+	// Object.~SDF3();
 }
 
 float SignedDistance(vec3 pos)
