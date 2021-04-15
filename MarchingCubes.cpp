@@ -4,7 +4,8 @@
 #define INTERPOLATE
 #include "CubeTables.hpp"
 #undef INTERPOLATE
-#include "SignedDistance.hpp"
+
+#include "SDFlib.hpp"
 
 
 
@@ -108,7 +109,7 @@ void BatchingMarch(float range, int numsteps, int resolution)
 			{
 				vec3 pos = vec3(x*range/numsteps, y*range/numsteps, z*range/numsteps);
 
-				if (abs(SignedDistance(pos)) <= range/numsteps*2.0f)
+				if (abs(SignedDistance(pos)) <= range/numsteps*1.735f)//*2.0f) //sqrt(3.0f))
 				{
 					MarchingCubes(pos, range/numsteps, resolution);
 				}
@@ -199,7 +200,7 @@ void RecursiveMarch2(vec3 xyz, float step, int recurse,
 	float dist = SignedDistance(xyz);
 
 	//abs(dist) <= sqrt(3)
-	if (abs(dist) <= step*2.0f)//*1.735f)
+	if (abs(dist) <= step*1.735f)//*2.0f) //sqrt(3.0f))
 	{
 		if (recurse)
 		{
@@ -410,7 +411,7 @@ void RecursiveMarch3(vec3 pos, float step, int recurse,
 	xy[0][0] = Distance{dist, true};
 
 	//abs(dist) <= sqrt(3)
-	if (abs(dist) <= step*2.0f)//*1.735f)
+	if (abs(dist) <= step*1.735f)//*2.0f) //sqrt(3.0f))
 	{
 		if (recurse)
 		{
@@ -520,7 +521,7 @@ void RecursiveMarch4(vec3 xyz, float step, int recurse,
 	float dist = SignedDistance(xyz);
 
 	//abs(dist) <= sqrt(3)
-	if (abs(dist) <= step*2.0f)//*1.735f)
+	if (abs(dist) <= step*1.735f)//*2.0f) //sqrt(3.0f))
 	{
 		if (recurse)
 		{
@@ -536,12 +537,14 @@ void RecursiveMarch4(vec3 xyz, float step, int recurse,
 		}
 		else
 		{
-			MarchingCubes(xyz, step, 12);
+			MarchingCubes(xyz, step, 80);
 		}
 	}
 	else { pass++; }
 }
 
+extern "C"
+{
 
 float *MarchingCubes(unsigned int *numEntries)
 {
@@ -553,19 +556,19 @@ float *MarchingCubes(unsigned int *numEntries)
 	// MarchingCubes(vec3(0.0f), 1.6f, 155);
 	// RecursiveMarch(vec3(0.0f), 10.0f, 10);
 	// RecursiveMarch2(vec3(0.0f), 10.0f, 10, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
-	// int recurse = 8;
-	// int sidelen = ipow(2, recurse+1)+1;
-	// RecursiveMarch3(vec3(0.0f), 10.0f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));
-	// RecursiveMarch4(vec3(0.0f), 1.6f, 5, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
-	BatchingMarch(1.6f, 18, 20);
+	int recurse = 10;
+	int sidelen = ipow(2, recurse+1)+1;
+	RecursiveMarch3(vec3(0.0f), 1.6f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));
+	// RecursiveMarch4(vec3(0.0f), 1.6f, 3, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
+	// BatchingMarch(1.6f, 10, 80);
 	struct timespec t2 = GetTime();
 
 	printf("Marching Cubes Calculation Time: ");
 	PrintDuration(t1, t2);
 	printf("\n");
-	printf("SDcount %d\n", SDCount);
 
 	*numEntries = NumEntries;
 	return VertexData;
 }
 
+}
