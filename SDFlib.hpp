@@ -171,7 +171,7 @@ public:
 	SDBox(vec3 size) : _SDF3()
 	{
 		// std::cout << "+ SDBox\n";
-		Size = size;
+		Size = size/2.0f;
 	}
 	~SDBox() {} //{ std::cout << "- SDBox\n"; }
 
