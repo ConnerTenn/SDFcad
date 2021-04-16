@@ -4,7 +4,7 @@
 #include <GL/glew.h> //Include GLEW
 #include <GLFW/glfw3.h> //Include GLFW
 
-#include "shader.hpp"
+#include "Shaders/shader.hpp"
 #include "SDFlib/SignedDistanceHelper.hpp"
 
 
@@ -83,7 +83,7 @@ int main()
 	glBindVertexArray(VertexArrayID);
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders( "TransformVertexShader.vertshader", "Mesh.fragshader" );
+	GLuint programID = LoadShaders( "Shaders/TransformVertexShader.vertshader", "Shaders/Mesh.fragshader" );
 	if (programID==(GLuint)-1)
 	{
 		return -1;

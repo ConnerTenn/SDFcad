@@ -22,7 +22,7 @@ all: clean
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $^ -c -o $@
 
-SDFcad: SDFcad.o SDFlib/SDFlib.a shader.o
+SDFcad: SDFcad.o SDFlib/SDFlib.a Shaders/shader.o
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 MeshExporter: MeshExporter.o SDFlib/SDFlib.a
@@ -34,6 +34,6 @@ SDFlib/SDFlib.a:
 
 
 clean :
-	rm -f SDFcad *.o *.a *.so
+	rm -f SDFcad *.o *.a *.so Shaders/*.o
 	$(make) -C SDFlib/ clean
 
