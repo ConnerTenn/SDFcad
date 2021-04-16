@@ -7,6 +7,7 @@
 
 #include "SDFlib.hpp"
 
+#include <math.h> 
 
 
 float *VertexData;
@@ -555,12 +556,19 @@ float *MarchingCubes(unsigned int *numEntries)
 	struct timespec t1 = GetTime();
 	// MarchingCubes(vec3(0.0f), 1.6f, 155);
 	// RecursiveMarch(vec3(0.0f), 10.0f, 10);
-	// RecursiveMarch2(vec3(0.0f), 10.0f, 10, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
-	int recurse = 7;
+	// RecursiveMarch2(vec3(0.0f), 1.6f, 5, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
+	int recurse = 5;
 	int sidelen = ipow(2, recurse+1)+1;
 	RecursiveMarch3(vec3(0.0f), 1.6f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));
 	// RecursiveMarch4(vec3(0.0f), 1.6f, 3, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
-	// BatchingMarch(1.6f, 10, 80);
+	// BatchingMarch(1.6f, 4, 8);
+
+	for (unsigned int i=0; i<NumEntries; i++)
+	{
+		//round to nearest 0.0001
+		VertexData[i] = roundf(VertexData[i] *10000.0f)/10000.0f;
+	}
+
 	struct timespec t2 = GetTime();
 
 	printf("Marching Cubes Calculation Time: ");
