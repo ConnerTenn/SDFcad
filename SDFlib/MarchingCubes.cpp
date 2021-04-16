@@ -572,8 +572,6 @@ void RecursiveMarch4(vec3 xyz, float step, int recurse,
 }
 #endif
 
-extern "C"
-{
 
 float *MarchingCubes(unsigned int *numEntries)
 {
@@ -623,4 +621,3 @@ float *MarchingCubes(unsigned int *numEntries)
 	return VertexData;
 }
 
-}

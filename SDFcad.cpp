@@ -285,6 +285,7 @@ int main()
 
 	// Cleanup VBO and shader
 	glDeleteBuffers(1, &vertexbuffer);
+	glDeleteBuffers(1, &normalbuffer);
 	glDeleteProgram(programID);
 	glDeleteVertexArrays(1, &VertexArrayID);
 

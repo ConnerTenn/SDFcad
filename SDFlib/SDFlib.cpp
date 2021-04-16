@@ -59,3 +59,14 @@ SDF3 Rotate(SDF3 object, float angle, vec3 axis)
 	return SDF3(new SDTransform(object, matrix));
 }
 
+
+
+//============================
+//==    Helper Functions    ==
+//============================
+
+vec3 CalculateNormal(vec3 p1, vec3 p2, vec3 p3)
+{
+	vec3 n1 = cross(p2-p1, p3-p1);
+	return normalize(n1);
+}

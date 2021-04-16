@@ -383,6 +383,19 @@ public:
 
 
 
+//============================
+//==    Helper Functions    ==
+//============================
+
+vec3 CalculateNormal(vec3 p1, vec3 p2, vec3 p3);
+
+float *MarchingCubes(unsigned int *numEntries);
+
+
+//================
+//==    User    ==
+//================
+
 extern "C"
 {
 	
@@ -392,8 +405,6 @@ void DestructSignedDistance();
 float SignedDistance(vec3 pos);
 // == End User Defined ==
 
-//Exported interface to the signed distance marching cubes implementation
-float *MarchingCubes(unsigned int *numEntries);
 
 }
 

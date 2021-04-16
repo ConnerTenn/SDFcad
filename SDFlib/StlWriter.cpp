@@ -1,5 +1,6 @@
 
 #include "StlWriter.hpp"
+#include "SDFlib.hpp"
 
 #include <stdio.h>
 #include <string.h>
@@ -14,11 +15,6 @@ typedef struct __attribute__((__packed__))
 	//No extra padding due to packed
 } TriangleData;
 
-vec3 CalculateNormal(vec3 p1, vec3 p2, vec3 p3)
-{
-	vec3 n1 = cross(p2-p1, p3-p1);
-	return normalize(n1);
-}
 
 void WriteSTL(float *vertexData, u32 numTriangles, char *filename)
 {
