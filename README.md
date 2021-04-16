@@ -77,15 +77,15 @@ Each time an object is created, a new _SDF object is allocated and contained wit
 //Handles reference tracking and automatic freeing
 void SDF3::ObjectDecr()
 {
-	if (Object)
-	{
-		Object->ReferenceCount--;
-		if (Object->ReferenceCount==0)
-		{
-			delete Object;
-		}
-	}
-	Object = 0;
+    if (Object)
+    {
+        Object->ReferenceCount--;
+        if (Object->ReferenceCount==0)
+        {
+            delete Object;
+        }
+    }
+    Object = 0;
 }
 ```
 
@@ -105,7 +105,7 @@ The overloaded "()" operator can be used to evaluate the SDF object at a given c
 //Evaluates the Signed Distance Function for a given point
 float SDF::operator()(vec3 pos)
 {
-	return (*Object)(pos);
+    return (*Object)(pos);
 }
 ```
 
@@ -115,15 +115,15 @@ For example, objects like SDFSphere just calculate their Signed Difference Funct
 //Example snippets:
 float SDFUnion::operator()(vec3 pos)
 {
-	return SdfUnion((*Object1.Object)(pos), (*Object2.Object)(pos));
+    return SdfUnion((*Object1.Object)(pos), (*Object2.Object)(pos));
 }
 float SDFTransform::operator()(vec3 pos)
 {
-	return (*Object.Object)(SdfTransform(pos, TransformMat));
+    return (*Object.Object)(SdfTransform(pos, TransformMat));
 }
 float SDFSphere::operator()(vec3 pos)
 {
-	return SdfSphere(pos, Radius);
+    return SdfSphere(pos, Radius);
 }
 ```
 
@@ -151,9 +151,9 @@ This all allows for manipulating objects intuitively. Otherwise, transformations
 ```C++
 float SignedDistance(vec3 pos)
 {
-	//Translate 1 unit to the right
-	vec3 translatedPos = pos - vec3(1,0,0);
-	//Create the sphere at this location
+    //Translate 1 unit to the right
+    vec3 translatedPos = pos - vec3(1,0,0);
+    //Create the sphere at this location
     return SdfSphere(translatedPos);
 }
 ```
