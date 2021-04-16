@@ -36,10 +36,6 @@ inline float SdfCylinder(vec3 pos, float height, float radius)
 //==    Modifiers    ==
 //=====================
 
-inline vec3 SdfTranslate(vec3 pos, vec3 move)
-{
-	return pos - move;
-}
 inline float SdfUnion(float d0, float d1)
 {
 	return min(d0, d1);
@@ -51,6 +47,10 @@ inline float SdfDifference(float d0, float d1)
 inline float SdfIntersect(float d0, float d1)
 {
 	return max(d0, d1);
+}
+inline vec3 SdfTranslate(vec3 pos, vec3 move)
+{
+	return pos - move;
 }
 inline vec3 SdfTransform(vec3 pos, mat4 matrix)
 {
