@@ -17,6 +17,22 @@ unsigned int NumEntries;
 
 #define BUFF_STEP_SIZE (100*1000*3*3)
 
+
+#define MARCHING_CUBES 0
+#define RECURSIVE_MARCH1 0
+#define RECURSIVE_MARCH2 1
+#define RECURSIVE_MARCH3 0
+#define RECURSIVE_MARCH4 0
+#define BATCHING_MARCH 0
+
+#if MARCHING_CUBES + RECURSIVE_MARCH1 + RECURSIVE_MARCH2 + RECURSIVE_MARCH3 + RECURSIVE_MARCH4 + BATCHING_MARCH > 1
+	#if MARCHING_CUBES + BATCHING_MARCH != 2
+		#error Only one MarhingCubes Algorithm can be selected
+	#endif
+#endif
+
+
+#if MARCHING_CUBES
 float *Points = 0;
 
 void MarchingCubes(vec3 pos, float step, int resolution)
@@ -99,8 +115,10 @@ void MarchingCubes(vec3 pos, float step, int resolution)
 	}
 	
 }
+#endif
 
 
+#if BATCHING_MARCH
 void BatchingMarch(float range, int numsteps, int resolution)
 {
 	for (int x=-numsteps/2; x<=numsteps/2; x++)
@@ -119,8 +137,10 @@ void BatchingMarch(float range, int numsteps, int resolution)
 		}
 	}
 }
+#endif
 
 
+#if RECURSIVE_MARCH1
 void RecursiveMarch(vec3 xyz, float step, int recurse)//, int depth)
 {
 	// for (int i=0; i<depth; i++)
@@ -192,8 +212,10 @@ void RecursiveMarch(vec3 xyz, float step, int recurse)//, int depth)
 		}
 	}
 }
+#endif
 
 
+#if RECURSIVE_MARCH2
 //Faster than RecursiveMarch3 when UserSignedDistance is fast to compute (aka C++ implementation)
 void RecursiveMarch2(vec3 xyz, float step, int recurse,
 	float dist1, float dist2, float dist3, float dist4, float dist5, float dist6, float dist7, float dist8,
@@ -267,7 +289,9 @@ void RecursiveMarch2(vec3 xyz, float step, int recurse,
 		}
 	}
 }
+#endif
 
+#if RECURSIVE_MARCH3
 #include <string.h>
 
 typedef struct
@@ -512,8 +536,10 @@ void RecursiveMarch3(vec3 pos, float step, int recurse,
 		}
 	}
 }
+#endif
 
 
+#if RECURSIVE_MARCH4
 int pass = 0;
 //Faster than RecursiveMarch3 when UserSignedDistance is fast to compute (aka C++ implementation)
 void RecursiveMarch4(vec3 xyz, float step, int recurse,
@@ -544,6 +570,7 @@ void RecursiveMarch4(vec3 xyz, float step, int recurse,
 	}
 	else { pass++; }
 }
+#endif
 
 extern "C"
 {
@@ -555,14 +582,32 @@ float *MarchingCubes(unsigned int *numEntries)
 	NumEntries=0;
 
 	Time t1 = GetTime();
-	// MarchingCubes(vec3(0.0f), 1.6f, 155);
-	// RecursiveMarch(vec3(0.0f), 10.0f, 10);
-	// RecursiveMarch2(vec3(0.0f), 1.6f, 5, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
+
+#if MARCHING_CUBES
+	MarchingCubes(vec3(0.0f), 1.6f, 155);
+#endif
+
+#if RECURSIVE_MARCH1
+	RecursiveMarch(vec3(0.0f), 10.0f, 10);
+#endif
+
+#if RECURSIVE_MARCH2
+	RecursiveMarch2(vec3(0.0f), 1.6f, 7, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
+#endif
+
+#if RECURSIVE_MARCH3
 	int recurse = 7;
 	int sidelen = ipow(2, recurse+1)+1;
 	RecursiveMarch3(vec3(0.0f), 1.6f, recurse, Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen), Array2D(sidelen));
-	// RecursiveMarch4(vec3(0.0f), 1.6f, 3, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
-	// BatchingMarch(1.6f, 4, 8);
+#endif
+
+#if RECURSIVE_MARCH4
+	RecursiveMarch4(vec3(0.0f), 1.6f, 3, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
+#endif
+
+#if BATCHING_MARCH
+	BatchingMarch(1.6f, 4, 8);
+#endif
 
 	for (unsigned int i=0; i<NumEntries; i++)
 	{
