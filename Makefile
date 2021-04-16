@@ -10,7 +10,7 @@ LDFLAGS += $(shell pkg-config --static --libs glew)
 
 make = $(MAKE) --no-print-directory -j8
 
-.PHONY: all clean SignedDistance.so
+.PHONY: all clean SignedDistance.so MeshExporter
 
 
 all: clean
@@ -18,6 +18,7 @@ all: clean
 	$(make) SDFlib.a CXXFLAGS="$(CXXFLAGS) -fPIC"
 	#Generate SDFcad without -fPIC
 	$(make) SDFcad
+	$(make) MeshExporter
 
 %.o: %.c
 	$(CC) $(CFLAGS) $^ -c -o $@
@@ -27,9 +28,11 @@ all: clean
 SDFcad: SDFcad.o Common.o shader.o SignedDistanceHelper.o
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
+MeshExporter: MeshExporter.o Common.o SignedDistanceHelper.o SDFlib.a
+	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 #Library with all the Signed Distance Framework
-SDFlib.a: SDFlib.o MarchingCubes.o Common.o
+SDFlib.a: SDFlib.o MarchingCubes.o Common.o StlWriter.o
 	ar rvs $@ $^
 
 #Generate the dynamic library for the Signed Distance function

@@ -2,9 +2,11 @@
 *.o
 *.a
 *.so
+*.stl
 
 SDFcad
 RayMarch.fragshader
+MeshExporter
 
 .vscode/
 
