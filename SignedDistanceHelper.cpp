@@ -33,13 +33,13 @@ void InitSignedDistance(char *filename)
 		exit(1);
 	}
 	ConstructSignedDistance = (void (*)())dlsym(SDlib, "ConstructSignedDistance");
-	if (!MarchingCubes)
+	if (!ConstructSignedDistance)
 	{
 		printf("Error loading DLL function: %s\n", dlerror());
 		exit(1);
 	}
 	DestructSignedDistance = (void (*)())dlsym(SDlib, "DestructSignedDistance");
-	if (!MarchingCubes)
+	if (!DestructSignedDistance)
 	{
 		printf("Error loading DLL function: %s\n", dlerror());
 		exit(1);
