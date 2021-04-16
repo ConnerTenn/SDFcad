@@ -566,8 +566,8 @@ float *MarchingCubes(unsigned int *numEntries)
 
 	for (unsigned int i=0; i<NumEntries; i++)
 	{
-		//round to nearest 0.0001
-		VertexData[i] = roundf(VertexData[i] *10000.0f)/10000.0f;
+		//round to nearest 0.000001
+		VertexData[i] = roundf(VertexData[i] *1000000.0f)/1000000.0f;
 	}
 
 	Time t2 = GetTime();

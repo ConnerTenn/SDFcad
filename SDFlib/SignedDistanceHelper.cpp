@@ -15,7 +15,7 @@ void InitSignedDistance(char *filename)
 	// sprintf(cmd, "gcc -Wall -fPIC -shared %s SignedDistanceObjects.cpp -o SignedDistance.so", filename);
 	// system("rm -f SignedDistance.so");
 	sprintf(cmd, "rm -f SDFlib/SignedDistance.so; make -C SDFlib/ SignedDistance.so SDF_FILE=../%s", filename);
-	std::cout << "%s\n", cmd;
+	std::cout << cmd << "\n";
 	system(cmd);
 
 	void *SDlib = dlopen("SDFlib/SignedDistance.so", RTLD_NOW);
