@@ -25,7 +25,7 @@ void WriteSTL(float *vertexData, u32 numTriangles, char *filename)
 	FILE *file = fopen(filename, "w");
 	if (file==0)
 	{
-		printf("Error opening file \"%s\" for writing\n", filename);
+		std::cout << "Error opening file \"" << filename << "\" for writing\n";
 	}
 
 	//== Header ==

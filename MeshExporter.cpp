@@ -25,12 +25,12 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			printf("Error: Unknown option %s\n", argv[i]);
+			std::cout << "Error: Unknown option " << argv[i] << "\n";
 		}
 	}
 
 
-	struct timespec t1 = GetTime();
+	Time t1 = GetTime();
 	
 	//Initialize the signed distance library
 	InitSignedDistance(cppSource);
@@ -48,12 +48,10 @@ int main(int argc, char **argv)
 	//Write the generated triangles to the stl file
 	WriteSTL(vertexData, numEntries/3/3, filename);
 
-	struct timespec t2 = GetTime();
+	Time t2 = GetTime();
 
 	//Print timing
-	printf("Total Time: ");
-	PrintDuration(t1, t2);
-	printf("\n");
+	std::cout << "Total Time: " << DurationString(t1, t2) << "\n";
 
 	return 0;
 }

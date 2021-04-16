@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
+#include <string>
 
 // Include GLM
 #include <glm/glm.hpp>
@@ -17,10 +18,10 @@ using namespace glm;
 #define TO_RAD(degree) ((degree)*TAU/360.0f)
 #define TO_DEG(rad) ((rad)*360.0f/TAU)
 
+typedef struct timespec Time;
 
-struct timespec GetTime();
-
-void PrintDuration(struct timespec t1, struct timespec t2);
+Time GetTime();
+std::string DurationString(Time t1, Time t2);
 
 int ipow(int a, int b);
 

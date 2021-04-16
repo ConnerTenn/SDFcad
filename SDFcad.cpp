@@ -96,7 +96,7 @@ int main()
 	GLuint lookDirID = glGetUniformLocation(programID, "LookDir");
 
 
-	struct timespec t1 = GetTime();
+	Time t1 = GetTime();
 	InitSignedDistance((char *)"SignedDistance.cpp");
 
 	std::cout << "Generating Marching Cubes...\n";
@@ -129,11 +129,9 @@ int main()
 		normalData[i+1*3+0]=n1.x; normalData[i+1*3+1]=n1.y; normalData[i+1*3+2]=n1.z;
 		normalData[i+2*3+0]=n1.x; normalData[i+2*3+1]=n1.y; normalData[i+2*3+2]=n1.z;
 	}
-	struct timespec t2 = GetTime();
+	Time t2 = GetTime();
 
-	printf("Total Time: ");
-	PrintDuration(t1, t2);
-	printf("\n");
+	std::cout << "Total Time: " << DurationString(t1, t2) << "\n";
 
 	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);

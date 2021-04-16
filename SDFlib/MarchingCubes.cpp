@@ -404,7 +404,7 @@ void RecursiveMarch3(vec3 pos, float step, int recurse,
 	Array2D top, Array2D bottom, Array2D left, Array2D right, Array2D front, Array2D back)
 {
 	int sidelen = ipow(2, recurse+1)+1;
-	// printf("sidelen:%d\n", sidelen);
+	// std::cout << "sidelen:" << sidelen << "\n";
 	Array2D xy = Array2D(sidelen);
 	Array2D xz = Array2D(sidelen);
 	Array2D yz = Array2D(sidelen);
@@ -554,7 +554,7 @@ float *MarchingCubes(unsigned int *numEntries)
 	VertexData = (float *)malloc(sizeof(float)*VertDataSize);
 	NumEntries=0;
 
-	struct timespec t1 = GetTime();
+	Time t1 = GetTime();
 	// MarchingCubes(vec3(0.0f), 1.6f, 155);
 	// RecursiveMarch(vec3(0.0f), 10.0f, 10);
 	// RecursiveMarch2(vec3(0.0f), 1.6f, 5, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
@@ -570,11 +570,9 @@ float *MarchingCubes(unsigned int *numEntries)
 		VertexData[i] = roundf(VertexData[i] *10000.0f)/10000.0f;
 	}
 
-	struct timespec t2 = GetTime();
+	Time t2 = GetTime();
 
-	printf("Marching Cubes Calculation Time: ");
-	PrintDuration(t1, t2);
-	printf("\n");
+	std::cout << "Total Time: " << DurationString(t1, t2) << "\n";
 
 	*numEntries = NumEntries;
 	return VertexData;
