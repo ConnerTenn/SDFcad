@@ -40,6 +40,28 @@ Objects are first initialized in the function ConstructSignedDistance. This is s
 
 SDF objects can be called with vec3 as a parameter to evaluate the signed distance function at that position. In this example, all that needs to be done is to call Object with the position argument.
 
+## Operations
+
+Operator(s) | Action
+-|-
+a+b <br> a\|b | Union of two objects. Encapsulates the Union() function.
+a-b | Difference between two objects. Encapsulates the Difference() function.
+a&b | Intersection between two objects. Encapsulates the Intersection() function.
+
+## Under the hood
+
+SDF3 objects are just containers for the underlying _SDF objects. They handle the overloaded operators and memory management. 
+
+Functions are used to abstract away and simplify the object creation. All objects like spheres and boxes inherit from the _SDF class. This allows them to be referenced polymorphically from the SDF object containing it.
+
+Each time an object is created, a new _SDF object is allocated and contained within an SDF object. _SDF objects are passed around by reference which minimizes the amount of times memory has to be allocated and freed. To enable this, each _SDF one keeps track of their reference count. When a SDF object obtains an _SDF object, it increments the reference counter. When it is destroyed, it decrements the reference counter. If the reference counter of an _SDF object reaches zero, it is freed.
+
+<br>
+
+From the above example, a new SDFCylinder object is allocated and stored within the cylinder variable. The Rotate function creates a SDFRotate object which stores a reference to the original cylinder, along with the transformation matrix. Therefore the creation of the cylinderX and cylinderZ objects only allocate 2 new SDFRotate objects, with the original cylinder being referenced in 3 places.
+
+The final statement creates a new SDFSphere and SDFBox object, as well as a SDFIntersection object to operate on them. SDFDifference and SDFUnion objects are also then created for the following operations.
+
 # SDFviewer
 
 A simple Mesh Viewer for the SDFcad implementation.
