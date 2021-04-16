@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h> //Include GLFW
 
 #include "shader.hpp"
-#include "SignedDistanceHelper.hpp"
+#include "SDFlib/SignedDistanceHelper.hpp"
 
 
 GLFWwindow* Window;

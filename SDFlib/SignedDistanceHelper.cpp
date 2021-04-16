@@ -1,5 +1,5 @@
 
-#include "Common.hpp"
+#include "../Common.hpp"
 #include "SignedDistanceHelper.hpp"
 
 #include <dlfcn.h>
@@ -14,11 +14,11 @@ void InitSignedDistance(char *filename)
 	char cmd[128];
 	// sprintf(cmd, "gcc -Wall -fPIC -shared %s SignedDistanceObjects.cpp -o SignedDistance.so", filename);
 	// system("rm -f SignedDistance.so");
-	sprintf(cmd, "rm -f SignedDistance.so; make SignedDistance.so SDF_FILE=%s", filename);
+	sprintf(cmd, "rm -f SDFlib/SignedDistance.so; make -C SDFlib/ SignedDistance.so SDF_FILE=../%s", filename);
 	printf("%s\n", cmd);
 	system(cmd);
 
-	void *SDlib = dlopen("./SignedDistance.so", RTLD_NOW);
+	void *SDlib = dlopen("SDFlib/SignedDistance.so", RTLD_NOW);
 	if (!SDlib)
 	{
 		printf("Error loading DLL: %s\n", dlerror());

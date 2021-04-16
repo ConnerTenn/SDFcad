@@ -1,7 +1,7 @@
 
 #include "Common.hpp"
-#include "SignedDistanceHelper.hpp"
-#include "StlWriter.hpp"
+#include "SDFlib/SignedDistanceHelper.hpp"
+#include "SDFlib/StlWriter.hpp"
 
 #include <string.h>
 

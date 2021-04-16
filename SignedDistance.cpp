@@ -1,5 +1,5 @@
 
-#include "SDFlib.hpp"
+#include "SDFlib/SDFlib.hpp"
 
 SDF3 Object;
 
