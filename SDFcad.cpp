@@ -97,7 +97,7 @@ int main()
 
 
 	struct timespec t1 = GetTime();
-	InitSignedDistance("SignedDistance.cpp");
+	InitSignedDistance((char *)"SignedDistance.cpp");
 
 	std::cout << "Generating Marching Cubes...\n";
 	unsigned int numEntries;

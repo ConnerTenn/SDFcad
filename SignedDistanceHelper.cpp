@@ -10,7 +10,7 @@ void (*DestructSignedDistance)();
 
 void *SDlib = 0;
 
-void InitSignedDistance(const char *filename)
+void InitSignedDistance(char *filename)
 {
 	char cmd[128];
 	// sprintf(cmd, "gcc -Wall -fPIC -shared %s SignedDistanceObjects.cpp -o SignedDistance.so", filename);
