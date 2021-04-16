@@ -25,20 +25,20 @@ all: clean
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $^ -c -o $@
 
-SDFcad: SDFcad.o Common.o shader.o SignedDistanceHelper.o
+SDFcad: SDFcad.o SDFlib.a Common.o shader.o
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
-MeshExporter: MeshExporter.o Common.o SignedDistanceHelper.o SDFlib.a
+MeshExporter: MeshExporter.o Common.o SDFlib.a
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 #Library with all the Signed Distance Framework
-SDFlib.a: SDFlib.o MarchingCubes.o Common.o StlWriter.o
+SDFlib.a: SDFlib.o MarchingCubes.o StlWriter.o SignedDistanceHelper.o
 	ar rvs $@ $^
 
 #Generate the dynamic library for the Signed Distance function
-SignedDistance.so: SDFlib.a
+SignedDistance.so: SDFlib.o
 	#Use of  -Wl,--whole-archive [lib] -Wl,--no-whole-archive  to make sure all symbols from the static library is included in the new dynamic library
-	$(CXX) -shared -fPIC $(CXXFLAGS) -Wl,--whole-archive $^ -Wl,--no-whole-archive $(SDF_FILE) -o $@
+	$(CXX) -shared -fPIC $(CXXFLAGS) $^ $(SDF_FILE) -o $@
 
 
 clean :

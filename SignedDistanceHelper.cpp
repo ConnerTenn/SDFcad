@@ -4,9 +4,8 @@
 
 #include <dlfcn.h>
 
-float *(*MarchingCubes)(unsigned int *numEntries);
-void (*ConstructSignedDistance)();
-void (*DestructSignedDistance)();
+void (*UserConstructSignedDistance)();
+void (*UserDestructSignedDistance)();
 
 void *SDlib = 0;
 
@@ -26,20 +25,20 @@ void InitSignedDistance(char *filename)
 		exit(1);
 	}
 
-	MarchingCubes = (float *(*)(unsigned int *))dlsym(SDlib, "MarchingCubes");
-	if (!MarchingCubes)
+	UserSignedDistance = (float (*)(vec3))dlsym(SDlib, "SignedDistance");
+	if (!UserSignedDistance)
 	{
 		printf("Error loading DLL function: %s\n", dlerror());
 		exit(1);
 	}
-	ConstructSignedDistance = (void (*)())dlsym(SDlib, "ConstructSignedDistance");
-	if (!ConstructSignedDistance)
+	UserConstructSignedDistance = (void (*)())dlsym(SDlib, "ConstructSignedDistance");
+	if (!UserConstructSignedDistance)
 	{
 		printf("Error loading DLL function: %s\n", dlerror());
 		exit(1);
 	}
-	DestructSignedDistance = (void (*)())dlsym(SDlib, "DestructSignedDistance");
-	if (!DestructSignedDistance)
+	UserDestructSignedDistance = (void (*)())dlsym(SDlib, "DestructSignedDistance");
+	if (!UserDestructSignedDistance)
 	{
 		printf("Error loading DLL function: %s\n", dlerror());
 		exit(1);

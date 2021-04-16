@@ -9,6 +9,7 @@
 
 #include <math.h> 
 
+float (*UserSignedDistance)(vec3);
 
 float *VertexData;
 unsigned int VertDataSize;
@@ -39,7 +40,7 @@ void MarchingCubes(vec3 pos, float step, int resolution)
 		int y = (i/res)%res;
 		int z = i%res;
 		vec3 point = pos+vec3(x*step/resolution, y*step/resolution, z*step/resolution);
-		(*points)[x][y][z] = SignedDistance(point);
+		(*points)[x][y][z] = UserSignedDistance(point);
 	}
 
 	for (int i=0; i<resolution*resolution*resolution; i++)
@@ -110,7 +111,7 @@ void BatchingMarch(float range, int numsteps, int resolution)
 			{
 				vec3 pos = vec3(x*range/numsteps, y*range/numsteps, z*range/numsteps);
 
-				if (abs(SignedDistance(pos)) <= range/numsteps*1.735f)//*2.0f) //sqrt(3.0f))
+				if (abs(UserSignedDistance(pos)) <= range/numsteps*1.735f)//*2.0f) //sqrt(3.0f))
 				{
 					MarchingCubes(pos, range/numsteps, resolution);
 				}
@@ -127,7 +128,7 @@ void RecursiveMarch(vec3 xyz, float step, int recurse)//, int depth)
 	// 	std::cout << "  ";
 	// }
 	// std::cout << xyz.x << " " << xyz.y << " " << xyz.z << "\n";
-	float dist = SignedDistance(xyz);
+	float dist = UserSignedDistance(xyz);
 
 	if (abs(dist) <= step*1.735f && recurse)
 	{
@@ -156,15 +157,15 @@ void RecursiveMarch(vec3 xyz, float step, int recurse)//, int depth)
 		grid.p[7] = xyz+vec3(-step/2.0f,+step/2.0f, step/2.0f);
 
 
-		grid.val[0] = SignedDistance(grid.p[0]);
-		grid.val[1] = SignedDistance(grid.p[1]);
-		grid.val[2] = SignedDistance(grid.p[2]);
-		grid.val[3] = SignedDistance(grid.p[3]);
+		grid.val[0] = UserSignedDistance(grid.p[0]);
+		grid.val[1] = UserSignedDistance(grid.p[1]);
+		grid.val[2] = UserSignedDistance(grid.p[2]);
+		grid.val[3] = UserSignedDistance(grid.p[3]);
 
-		grid.val[4] = SignedDistance(grid.p[4]);
-		grid.val[5] = SignedDistance(grid.p[5]);
-		grid.val[6] = SignedDistance(grid.p[6]);
-		grid.val[7] = SignedDistance(grid.p[7]);
+		grid.val[4] = UserSignedDistance(grid.p[4]);
+		grid.val[5] = UserSignedDistance(grid.p[5]);
+		grid.val[6] = UserSignedDistance(grid.p[6]);
+		grid.val[7] = UserSignedDistance(grid.p[7]);
 
 		int numtri = Polygonise(grid, 0.0, triangles);
 
@@ -193,12 +194,12 @@ void RecursiveMarch(vec3 xyz, float step, int recurse)//, int depth)
 }
 
 
-//Faster than RecursiveMarch3 when SignedDistance is fast to compute (aka C++ implementation)
+//Faster than RecursiveMarch3 when UserSignedDistance is fast to compute (aka C++ implementation)
 void RecursiveMarch2(vec3 xyz, float step, int recurse,
 	float dist1, float dist2, float dist3, float dist4, float dist5, float dist6, float dist7, float dist8,
 	bool d1En, bool d2En, bool d3En, bool d4En, bool d5En, bool d6En, bool d7En, bool d8En)
 {
-	float dist = SignedDistance(xyz);
+	float dist = UserSignedDistance(xyz);
 
 	//abs(dist) <= sqrt(3)
 	if (abs(dist) <= step*1.735f)//*2.0f) //sqrt(3.0f))
@@ -230,15 +231,15 @@ void RecursiveMarch2(vec3 xyz, float step, int recurse,
 			grid.p[7] = xyz+vec3(-step/2.0f, step/2.0f, step/2.0f);
 
 
-			if (d1En) { grid.val[0] = dist1; } else { grid.val[0] = SignedDistance(grid.p[0]); }
-			if (d2En) { grid.val[1] = dist2; } else { grid.val[1] = SignedDistance(grid.p[1]); }
-			if (d3En) { grid.val[2] = dist3; } else { grid.val[2] = SignedDistance(grid.p[2]); }
-			if (d4En) { grid.val[3] = dist4; } else { grid.val[3] = SignedDistance(grid.p[3]); }
+			if (d1En) { grid.val[0] = dist1; } else { grid.val[0] = UserSignedDistance(grid.p[0]); }
+			if (d2En) { grid.val[1] = dist2; } else { grid.val[1] = UserSignedDistance(grid.p[1]); }
+			if (d3En) { grid.val[2] = dist3; } else { grid.val[2] = UserSignedDistance(grid.p[2]); }
+			if (d4En) { grid.val[3] = dist4; } else { grid.val[3] = UserSignedDistance(grid.p[3]); }
 
-			if (d5En) { grid.val[4] = dist5; } else { grid.val[4] = SignedDistance(grid.p[4]); }
-			if (d6En) { grid.val[5] = dist6; } else { grid.val[5] = SignedDistance(grid.p[5]); }
-			if (d7En) { grid.val[6] = dist7; } else { grid.val[6] = SignedDistance(grid.p[6]); }
-			if (d8En) { grid.val[7] = dist8; } else { grid.val[7] = SignedDistance(grid.p[7]); }
+			if (d5En) { grid.val[4] = dist5; } else { grid.val[4] = UserSignedDistance(grid.p[4]); }
+			if (d6En) { grid.val[5] = dist6; } else { grid.val[5] = UserSignedDistance(grid.p[5]); }
+			if (d7En) { grid.val[6] = dist7; } else { grid.val[6] = UserSignedDistance(grid.p[6]); }
+			if (d8En) { grid.val[7] = dist8; } else { grid.val[7] = UserSignedDistance(grid.p[7]); }
 
 			int numtri = Polygonise(grid, 0.0, triangles);
 
@@ -398,7 +399,7 @@ n
 
 */
 
-//Faster than RecursiveMarch2 when SignedDistance is slow to compute (aka python implementation)
+//Faster than RecursiveMarch2 when UserSignedDistance is slow to compute (aka python implementation)
 void RecursiveMarch3(vec3 pos, float step, int recurse,
 	Array2D top, Array2D bottom, Array2D left, Array2D right, Array2D front, Array2D back)
 {
@@ -408,7 +409,7 @@ void RecursiveMarch3(vec3 pos, float step, int recurse,
 	Array2D xz = Array2D(sidelen);
 	Array2D yz = Array2D(sidelen);
 
-	float dist = SignedDistance(pos);
+	float dist = UserSignedDistance(pos);
 	xy[0][0] = Distance{dist, true};
 
 	//abs(dist) <= sqrt(3)
@@ -446,43 +447,43 @@ void RecursiveMarch3(vec3 pos, float step, int recurse,
 			if      (bottom[ r][-r].Set) { grid.val[0] = bottom[ r][-r].Dist; } 
 			else if (left  [-r][-r].Set) { grid.val[0] = left  [-r][-r].Dist; } 
 			else if (back  [-r][-r].Set) { grid.val[0] = back  [-r][-r].Dist; }
-			else { grid.val[0] = SignedDistance(grid.p[0]); bottom[ r][-r] = Distance{grid.val[0], true}; left [-r][-r] = Distance{grid.val[0], true}; back [-r][-r] = Distance{grid.val[0], true}; }
+			else { grid.val[0] = UserSignedDistance(grid.p[0]); bottom[ r][-r] = Distance{grid.val[0], true}; left [-r][-r] = Distance{grid.val[0], true}; back [-r][-r] = Distance{grid.val[0], true}; }
 
 			if      (bottom[ r][ r].Set) { grid.val[1] = bottom[ r][ r].Dist; } 
 			else if (right [-r][-r].Set) { grid.val[1] = right [-r][-r].Dist; } 
 			else if (back  [-r][ r].Set) { grid.val[1] = back  [-r][ r].Dist; }
-			else { grid.val[1] = SignedDistance(grid.p[1]); bottom[ r][ r] = Distance{grid.val[1], true}; right[-r][-r] = Distance{grid.val[1], true}; back[-r][ r] = Distance{grid.val[1], true}; }
+			else { grid.val[1] = UserSignedDistance(grid.p[1]); bottom[ r][ r] = Distance{grid.val[1], true}; right[-r][-r] = Distance{grid.val[1], true}; back[-r][ r] = Distance{grid.val[1], true}; }
 
 			if      (bottom[-r][ r].Set) { grid.val[2] = bottom[-r][ r].Dist; } 
 			else if (right [-r][ r].Set) { grid.val[2] = right [-r][ r].Dist; } 
 			else if (front [-r][ r].Set) { grid.val[2] = front [-r][ r].Dist; }
-			else { grid.val[2] = SignedDistance(grid.p[2]); bottom[-r][ r] = Distance{grid.val[2], true}; right[-r][ r] = Distance{grid.val[2], true}; front[-r][ r] = Distance{grid.val[2], true}; }
+			else { grid.val[2] = UserSignedDistance(grid.p[2]); bottom[-r][ r] = Distance{grid.val[2], true}; right[-r][ r] = Distance{grid.val[2], true}; front[-r][ r] = Distance{grid.val[2], true}; }
 
 			if      (bottom[-r][-r].Set) { grid.val[3] = bottom[-r][-r].Dist; } 
 			else if (left  [-r][ r].Set) { grid.val[3] = left  [-r][ r].Dist; } 
 			else if (front [-r][-r].Set) { grid.val[3] = front [-r][-r].Dist; } 
-			else { grid.val[3] = SignedDistance(grid.p[3]); bottom[-r][-r] = Distance{grid.val[3], true}; left [-r][ r] = Distance{grid.val[3], true}; front[-r][-r] = Distance{grid.val[3], true}; }
+			else { grid.val[3] = UserSignedDistance(grid.p[3]); bottom[-r][-r] = Distance{grid.val[3], true}; left [-r][ r] = Distance{grid.val[3], true}; front[-r][-r] = Distance{grid.val[3], true}; }
 
 
 			if      (top [ r][-r].Set) { grid.val[4] = top [ r][-r].Dist; } 
 			else if (left[ r][-r].Set) { grid.val[4] = left[ r][-r].Dist; } 
 			else if (back[ r][-r].Set) { grid.val[4] = back[ r][-r].Dist; }
-			else { grid.val[4] = SignedDistance(grid.p[4]); top[ r][-r] = Distance{grid.val[4], true}; left[ r][-r] = Distance{grid.val[4], true}; back[ r][-r] = Distance{grid.val[4], true}; }
+			else { grid.val[4] = UserSignedDistance(grid.p[4]); top[ r][-r] = Distance{grid.val[4], true}; left[ r][-r] = Distance{grid.val[4], true}; back[ r][-r] = Distance{grid.val[4], true}; }
 			
 			if      (top  [ r][ r].Set) { grid.val[5] = top  [ r][ r].Dist; } 
 			else if (right[ r][-r].Set) { grid.val[5] = right[ r][-r].Dist; } 
 			else if (back [ r][ r].Set) { grid.val[5] = back [ r][ r].Dist; }
-			else { grid.val[5] = SignedDistance(grid.p[5]); top[ r][ r] = Distance{grid.val[5], true}; right[ r][-r] = Distance{grid.val[5], true}; back[ r][ r] = Distance{grid.val[5], true}; }
+			else { grid.val[5] = UserSignedDistance(grid.p[5]); top[ r][ r] = Distance{grid.val[5], true}; right[ r][-r] = Distance{grid.val[5], true}; back[ r][ r] = Distance{grid.val[5], true}; }
 
 			if      (top  [-r][ r].Set) { grid.val[6] = top  [-r][ r].Dist; } 
 			else if (right[ r][ r].Set) { grid.val[6] = right[ r][ r].Dist; } 
 			else if (front[ r][ r].Set) { grid.val[6] = front[ r][ r].Dist; }
-			else { grid.val[6] = SignedDistance(grid.p[6]); top[-r][ r] = Distance{grid.val[6], true}; right[ r][ r] = Distance{grid.val[6], true}; front[ r][ r] = Distance{grid.val[6], true}; }
+			else { grid.val[6] = UserSignedDistance(grid.p[6]); top[-r][ r] = Distance{grid.val[6], true}; right[ r][ r] = Distance{grid.val[6], true}; front[ r][ r] = Distance{grid.val[6], true}; }
 			
 			if      (top  [-r][-r].Set) { grid.val[7] = top  [-r][-r].Dist; } 
 			else if (left [ r][ r].Set) { grid.val[7] = left [ r][ r].Dist; } 
 			else if (front[ r][-r].Set) { grid.val[7] = front[ r][-r].Dist; } 
-			else { grid.val[7] = SignedDistance(grid.p[7]); top[-r][-r] = Distance{grid.val[7], true}; left [ r][ r] = Distance{grid.val[7], true}; front[ r][-r] = Distance{grid.val[7], true}; }
+			else { grid.val[7] = UserSignedDistance(grid.p[7]); top[-r][-r] = Distance{grid.val[7], true}; left [ r][ r] = Distance{grid.val[7], true}; front[ r][-r] = Distance{grid.val[7], true}; }
 
 
 			int numtri = Polygonise(grid, 0.0, triangles);
@@ -514,12 +515,12 @@ void RecursiveMarch3(vec3 pos, float step, int recurse,
 
 
 int pass = 0;
-//Faster than RecursiveMarch3 when SignedDistance is fast to compute (aka C++ implementation)
+//Faster than RecursiveMarch3 when UserSignedDistance is fast to compute (aka C++ implementation)
 void RecursiveMarch4(vec3 xyz, float step, int recurse,
 	float dist1, float dist2, float dist3, float dist4, float dist5, float dist6, float dist7, float dist8,
 	bool d1En, bool d2En, bool d3En, bool d4En, bool d5En, bool d6En, bool d7En, bool d8En)
 {
-	float dist = SignedDistance(xyz);
+	float dist = UserSignedDistance(xyz);
 
 	//abs(dist) <= sqrt(3)
 	if (abs(dist) <= step*1.735f)//*2.0f) //sqrt(3.0f))

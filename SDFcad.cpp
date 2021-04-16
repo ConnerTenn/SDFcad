@@ -101,9 +101,9 @@ int main()
 
 	std::cout << "Generating Marching Cubes...\n";
 	unsigned int numEntries;
-	ConstructSignedDistance();
+	UserConstructSignedDistance();
 	float *vertexData = MarchingCubes(&numEntries);
-	DestructSignedDistance();
+	UserDestructSignedDistance();
 	std::cout << "Marching Cubes generated (" << numEntries/3 << " vertices) (" << (numEntries/3)/3 << " triangles)\n";
 
 	float *normalData = (float *)malloc(sizeof(float)*numEntries);

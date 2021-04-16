@@ -397,4 +397,6 @@ float *MarchingCubes(unsigned int *numEntries);
 
 }
 
+extern float (*UserSignedDistance)(vec3);
+
 #endif

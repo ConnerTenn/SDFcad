@@ -38,9 +38,9 @@ int main(int argc, char **argv)
 	std::cout << "Generating Marching Cubes...\n";
 
 	unsigned int numEntries;
-	ConstructSignedDistance();
+	UserConstructSignedDistance();
 	float *vertexData = MarchingCubes(&numEntries);
-	DestructSignedDistance();
+	UserDestructSignedDistance();
 
 	//Print stats
 	std::cout << "Marching Cubes generated (" << numEntries/3 << " vertices) (" << (numEntries/3)/3 << " triangles)\n";
