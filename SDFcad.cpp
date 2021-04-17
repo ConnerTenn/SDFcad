@@ -26,6 +26,49 @@ void ResizeCallback(GLFWwindow* Window, int width, int height)
 	glViewport(0, 0, WindowWidth, WindowHeight);
 }
 
+unsigned int LoadMesh(GLuint vertexbuffer, GLuint normalbuffer)
+{
+	Time t1 = GetTime();
+
+	InitSignedDistance((char *)"SignedDistance.cpp");
+
+	std::cout << "Generating Marching Cubes...\n";
+	unsigned int numEntries;
+	UserConstructSignedDistance();
+	float *vertexData = MarchingCubes(&numEntries);
+	UserDestructSignedDistance();
+	std::cout << "Marching Cubes generated (" << numEntries/3 << " vertices) (" << (numEntries/3)/3 << " triangles)\n";
+
+	float *normalData = (float *)malloc(sizeof(float)*numEntries);
+	for (unsigned int i=0; i<numEntries; i+=3*3)
+	{
+		vec3 normal = CalculateNormal(
+			vec3(vertexData[i+0*3+0], vertexData[i+0*3+1], vertexData[i+0*3+2]),
+			vec3(vertexData[i+1*3+0], vertexData[i+1*3+1], vertexData[i+1*3+2]),
+			vec3(vertexData[i+2*3+0], vertexData[i+2*3+1], vertexData[i+2*3+2]));
+
+		normalData[i+0*3+0]=normal.x; normalData[i+0*3+1]=normal.y; normalData[i+0*3+2]=normal.z;
+		normalData[i+1*3+0]=normal.x; normalData[i+1*3+1]=normal.y; normalData[i+1*3+2]=normal.z;
+		normalData[i+2*3+0]=normal.x; normalData[i+2*3+1]=normal.y; normalData[i+2*3+2]=normal.z;
+	}
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*numEntries, vertexData, GL_DYNAMIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*numEntries, normalData, GL_DYNAMIC_DRAW);
+
+	free(vertexData);
+	free(normalData);
+	ShutdownSignedDistance();
+
+	Time t2 = GetTime();
+	std::cout << "Total Time: " << DurationString(t1, t2) << "\n";
+
+	return numEntries;
+}
+
 int main()
 {
 	// Initialise GLFW
@@ -95,58 +138,13 @@ int main()
 
 	GLuint lookDirID = glGetUniformLocation(programID, "LookDir");
 
-
-	Time t1 = GetTime();
-	InitSignedDistance((char *)"SignedDistance.cpp");
-
-	std::cout << "Generating Marching Cubes...\n";
-	unsigned int numEntries;
-	UserConstructSignedDistance();
-	float *vertexData = MarchingCubes(&numEntries);
-	UserDestructSignedDistance();
-	std::cout << "Marching Cubes generated (" << numEntries/3 << " vertices) (" << (numEntries/3)/3 << " triangles)\n";
-
-	float *normalData = (float *)malloc(sizeof(float)*numEntries);
-	for (unsigned int i=0; i<numEntries; i+=3*3)
-	{
-		vec3 p1 = vec3(vertexData[i+0*3+0], vertexData[i+0*3+1], vertexData[i+0*3+2]);
-		vec3 p2 = vec3(vertexData[i+1*3+0], vertexData[i+1*3+1], vertexData[i+1*3+2]);
-		vec3 p3 = vec3(vertexData[i+2*3+0], vertexData[i+2*3+1], vertexData[i+2*3+2]);
-
-		vec3 n1 = cross(p2-p1, p3-p1);
-		// float n1mag = length(n1);
-		n1 = normalize(n1);
-
-		// vec3 n2 = cross(p1-p2, p3-p2);
-		// float n2mag = length(n2);
-		// n2 = normalize(n2);
-		
-		// vec3 n3 = cross(p1-p3, p2-p3);
-		// float n3mag = length(n3);
-		// n3 = normalize(n3);
-
-		normalData[i+0*3+0]=n1.x; normalData[i+0*3+1]=n1.y; normalData[i+0*3+2]=n1.z;
-		normalData[i+1*3+0]=n1.x; normalData[i+1*3+1]=n1.y; normalData[i+1*3+2]=n1.z;
-		normalData[i+2*3+0]=n1.x; normalData[i+2*3+1]=n1.y; normalData[i+2*3+2]=n1.z;
-	}
-	Time t2 = GetTime();
-
-	std::cout << "Total Time: " << DurationString(t1, t2) << "\n";
-
 	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*numEntries, vertexData, GL_DYNAMIC_DRAW);
 	
 	GLuint normalbuffer;
 	glGenBuffers(1, &normalbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*numEntries, normalData, GL_DYNAMIC_DRAW);
 
-	free(vertexData);
-	free(normalData);
-	
-	ShutdownSignedDistance();
+	unsigned int numEntries = LoadMesh(vertexbuffer, normalbuffer);
 
 	std::cout << "Entering Main Loop\n";
 	do
@@ -227,56 +225,7 @@ int main()
 
 			if (key == GLFW_PRESS && keylast == GLFW_RELEASE)
 			{
-				Time t1 = GetTime();
-				InitSignedDistance((char *)"SignedDistance.cpp");
-
-				std::cout << "Generating Marching Cubes...\n";
-				unsigned int numEntries;
-				UserConstructSignedDistance();
-				float *vertexData = MarchingCubes(&numEntries);
-				UserDestructSignedDistance();
-				std::cout << "Marching Cubes generated (" << numEntries/3 << " vertices) (" << (numEntries/3)/3 << " triangles)\n";
-
-				float *normalData = (float *)malloc(sizeof(float)*numEntries);
-				for (unsigned int i=0; i<numEntries; i+=3*3)
-				{
-					vec3 p1 = vec3(vertexData[i+0*3+0], vertexData[i+0*3+1], vertexData[i+0*3+2]);
-					vec3 p2 = vec3(vertexData[i+1*3+0], vertexData[i+1*3+1], vertexData[i+1*3+2]);
-					vec3 p3 = vec3(vertexData[i+2*3+0], vertexData[i+2*3+1], vertexData[i+2*3+2]);
-
-					vec3 n1 = cross(p2-p1, p3-p1);
-					// float n1mag = length(n1);
-					n1 = normalize(n1);
-
-					// vec3 n2 = cross(p1-p2, p3-p2);
-					// float n2mag = length(n2);
-					// n2 = normalize(n2);
-					
-					// vec3 n3 = cross(p1-p3, p2-p3);
-					// float n3mag = length(n3);
-					// n3 = normalize(n3);
-
-					normalData[i+0*3+0]=n1.x; normalData[i+0*3+1]=n1.y; normalData[i+0*3+2]=n1.z;
-					normalData[i+1*3+0]=n1.x; normalData[i+1*3+1]=n1.y; normalData[i+1*3+2]=n1.z;
-					normalData[i+2*3+0]=n1.x; normalData[i+2*3+1]=n1.y; normalData[i+2*3+2]=n1.z;
-				}
-				Time t2 = GetTime();
-
-				std::cout << "Total Time: " << DurationString(t1, t2) << "\n";
-
-				// GLuint vertexbuffer;
-				// glGenBuffers(1, &vertexbuffer);
-				glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-				glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*numEntries, vertexData, GL_DYNAMIC_DRAW);
-				
-				// GLuint normalbuffer;
-				// glGenBuffers(1, &normalbuffer);
-				glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-				glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*numEntries, normalData, GL_DYNAMIC_DRAW);
-
-				free(vertexData);
-				free(normalData);
-				ShutdownSignedDistance();
+				numEntries = LoadMesh(vertexbuffer, normalbuffer);
 			}
 
 			keylast = key;
