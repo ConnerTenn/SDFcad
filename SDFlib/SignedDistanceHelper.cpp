@@ -18,7 +18,7 @@ void InitSignedDistance(char *filename)
 	std::cout << cmd << "\n";
 	system(cmd);
 
-	void *SDlib = dlopen("SDFlib/SignedDistance.so", RTLD_NOW);
+	SDlib = dlopen("SDFlib/SignedDistance.so", RTLD_NOW);
 	if (!SDlib)
 	{
 		std::cout << "Error loading DLL: " << dlerror() << "\n";
@@ -47,7 +47,8 @@ void InitSignedDistance(char *filename)
 
 void ShutdownSignedDistance()
 {
-	// dlclose(SDlib);
+	dlclose(SDlib);
+	SDlib = 0;
 }
 
 
