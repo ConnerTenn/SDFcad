@@ -51,8 +51,7 @@ a&b | Intersection between two objects. Encapsulates the Intersection() function
 ## Under the hood
 
 SDF3 objects are just containers for the underlying _SDF objects. They handle the overloaded operators and memory management. 
-
-Functions are used to abstract away and simplify the object creation. All objects like spheres and boxes inherit from the _SDF class. This allows them to be referenced polymorphically from the SDF object containing it.
+These objects can easily be created with various wrapper functions.
 
 ```C++
 //== Object Wrappers ==
@@ -71,7 +70,7 @@ SDF3 Transform(SDF3 object, mat4 matrix);
 SDF3 Rotate(SDF3 object, float angle, vec3 axis);
 ```
 
-Each time an object is created, a new _SDF object is allocated and contained within an SDF object. _SDF objects are passed around by reference which minimizes the amount of times memory has to be allocated and freed. To enable this, each _SDF one keeps track of their reference count. When a SDF object obtains an _SDF object, it increments the reference counter. When it is destroyed, it decrements the reference counter. If the reference counter of an _SDF object reaches zero, it is freed.
+All objects like spheres and boxes inherit from the _SDF class. This allows them to be referenced polymorphically from the SDF object containing it. _SDF objects are passed around by reference which minimizes the amount of times memory has to be allocated and freed. To accomplish this, each _SDF one keeps track of their reference count. When a SDF object obtains an _SDF object, it increments the reference counter. When it is destroyed, it decrements the reference counter. If the reference counter of an _SDF object reaches zero, it is freed.
 
 ```C++
 //Handles reference tracking and automatic freeing
@@ -89,7 +88,7 @@ void SDF3::ObjectDecr()
 }
 ```
 
-Operations also inherit from the _SDF class and are likewise stored in the SDF containers. This enables a simple interface where operations can be intuitively used and chained together following the regular order of operations. The difference is that Operations often store one or more other SDF container within it. This allows them to apply the appropriate transformations/calculations to each object when being evaluated.
+Operations like union and translate also inherit from the _SDF class, and are likewise stored in the SDF containers. This allows for a simple interface where operations can be intuitively used and chained together with the regular order of operations. The difference is that operation objects often store one or more other SDF container within it. This allows them to apply the appropriate transformations/calculations to each object when being evaluated.
 
 <br>
 
