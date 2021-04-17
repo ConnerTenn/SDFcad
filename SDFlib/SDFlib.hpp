@@ -389,7 +389,7 @@ public:
 
 vec3 CalculateNormal(vec3 p1, vec3 p2, vec3 p3);
 
-float *MarchingCubes(unsigned int *numEntries);
+float *MarchingCubes(unsigned int *numEntries, float sidelen, float minsize);
 
 
 //================

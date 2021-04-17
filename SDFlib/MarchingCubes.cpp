@@ -573,7 +573,7 @@ void RecursiveMarch4(vec3 xyz, float step, int recurse,
 #endif
 
 
-float *MarchingCubes(unsigned int *numEntries)
+float *MarchingCubes(unsigned int *numEntries, float sidelen, float minsize)
 {
 	VertDataSize = BUFF_STEP_SIZE;
 	VertexData = (float *)malloc(sizeof(float)*VertDataSize);
@@ -590,7 +590,10 @@ float *MarchingCubes(unsigned int *numEntries)
 #endif
 
 #if RECURSIVE_MARCH2
-	RecursiveMarch2(vec3(0.0f), 1.6f, 7, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
+	//resolution = sidelen / (2 ** recurse)
+	//Rearranged: recurse = ceil( log2(sidelen/resolution) )
+	int recurse = ceil(log2(sidelen/minsize));
+	RecursiveMarch2(vec3(0.0f), sidelen, recurse, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, false, false, false);
 #endif
 
 #if RECURSIVE_MARCH3
@@ -607,10 +610,13 @@ float *MarchingCubes(unsigned int *numEntries)
 	BatchingMarch(1.6f, 4, 8);
 #endif
 
+
+	//Rounding for export to .stl so that vertices may be joined
+	float factor = (sidelen/minsize)*1000.0f; //Rounding to 1000 times smaller than the minimum size. May be smaller for a more blocky effect
 	for (unsigned int i=0; i<NumEntries; i++)
 	{
-		//round to nearest 0.000001
-		VertexData[i] = roundf(VertexData[i] *1000000.0f)/1000000.0f;
+		//round to min size
+		VertexData[i] = roundf(VertexData[i] * factor) / factor;
 	}
 
 	Time t2 = GetTime();
