@@ -1,6 +1,7 @@
 # SDFcad
 
-This is a pretty early work in progress! There's still a lot of work to be done, features to be added, and things to clean up. I'll be refining it over time.
+This is mostly a project for playing around with the idea and trying my hand at my own implementation.
+I'll probably be updating this a bit over time but more complete projects already exist like [Matt Keeter's](https://www.mattkeeter.com/) [Libfive](https://libfive.com/).
 
 Special thanks to [Sebastian Lague's Coding Adventure](https://youtu.be/Cp5WWtMoeKg) and [Michael Fogleman](https://github.com/fogleman/sdf/) for a lot of the inspiration for this program. Also thanks to [Inigo Quilez] for documentating the implementation for a large variety of signed distance functions.
 
