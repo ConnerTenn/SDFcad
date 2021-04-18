@@ -35,7 +35,7 @@ unsigned int LoadMesh(GLuint vertexbuffer, GLuint normalbuffer)
 	std::cout << "Generating Marching Cubes...\n";
 	unsigned int numEntries;
 	UserConstructSignedDistance();
-	float *vertexData = MarchingCubes(&numEntries, 1.6, 0.01);
+	float *vertexData = GenerateMesh(&numEntries, 1.6, 0.01);
 	UserDestructSignedDistance();
 	std::cout << "Marching Cubes generated (" << numEntries/3 << " vertices) (" << (numEntries/3)/3 << " triangles)\n";
 

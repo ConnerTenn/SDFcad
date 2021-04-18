@@ -573,7 +573,7 @@ void RecursiveMarch4(vec3 xyz, float step, int recurse,
 #endif
 
 
-float *MarchingCubes(unsigned int *numEntries, float sidelen, float minsize)
+float *GenerateMesh(unsigned int *numEntries, float sidelen, float minsize)
 {
 	VertDataSize = BUFF_STEP_SIZE;
 	VertexData = (float *)malloc(sizeof(float)*VertDataSize);
