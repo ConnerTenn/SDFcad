@@ -50,6 +50,17 @@ a&b | Intersection between two objects. Encapsulates the Intersection() function
 
 ## Under the hood
 
+### Mesh Generation
+
+The mesh is generated using an octree based [marching cubes](http://paulbourke.net/geometry/polygonise/) algorithm. The center of the cube is evaluated to determine the distance to the surface feature. If the surface is far away from this cube, the recursion ends and nothing is processed. If the surface is nearby (potentially within the cube), 8 sub cubes are evaluated recursively. Once the maximum recursion depth is reached, instead of recursing further, the standard marching cubes algorithm is performed. This is more efficient compared to an array based uniform marching cubes implementation since it avoids processing volumes that don't contain any surface features.
+
+To slightly optimize this, the points that were evaluated in the parent cube are passed down to the child cubes so that they don't need to be reevaluated.
+
+Triangles that are calculated from this algorithm are simply appended to a global list in order so that they can be rendered or exported later.
+
+
+### SDF Implementation and Evaluation
+
 SDF3 objects are just containers for the underlying _SDF objects. They handle the overloaded operators and memory management. 
 These objects can easily be created with various wrapper functions.
 
@@ -105,24 +116,6 @@ The overloaded "()" operator can be used to evaluate the SDF object at a given c
 float SDF::operator()(vec3 pos)
 {
     return (*Object)(pos);
-}
-```
-
-For example, objects like SDFSphere just calculate their Signed Difference Function with the given coordinate. Operators like SDFTranslate work by changing the coordinate before calling the object it contains. Operators like SDFUnion instead work by operating on the value returned by it's objects (taking the min in this case).
-
-```C++
-//Example snippets:
-float SDFUnion::operator()(vec3 pos)
-{
-    return SdfUnion((*Object1.Object)(pos), (*Object2.Object)(pos));
-}
-float SDFTransform::operator()(vec3 pos)
-{
-    return (*Object.Object)(SdfTransform(pos, TransformMat));
-}
-float SDFSphere::operator()(vec3 pos)
-{
-    return SdfSphere(pos, Radius);
 }
 ```
 
